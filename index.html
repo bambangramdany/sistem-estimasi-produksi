@@ -26,7 +26,13 @@
     <input id="tanggalEstimasi" type="date" oninput="simpanData()">
 <div class="supplier-box no-print">
   <h3>Supplier Database</h3>
+<div class="history-box no-print">
+  <h3>Histori Harga</h3>
+  <button onclick="simpanHistoriHarga()">Simpan Harga ke Histori</button>
+  <button class="reset" onclick="resetHistoriHarga()">Reset Histori</button>
 
+  <div id="historiHargaView"></div>
+</div>
   <div class="supplier-form">
     <input id="namaSupplierBaru" type="text" placeholder="Nama Supplier / Vendor">
     <input id="kategoriSupplierBaru" type="text" placeholder="Kategori Supplier">
