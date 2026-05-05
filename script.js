@@ -1,7 +1,9 @@
 const STORAGE_KEY = "dataEstimasiProduksi";
 function muatSupplier() {
   const dataSupplier = localStorage.getItem(SUPPLIER_KEY);
+const HISTORY_KEY = "dataHistoriHargaProduksi";
 
+let historiHargaList = [];
   if (dataSupplier) {
     supplierList = JSON.parse(dataSupplier);
   } else {
@@ -27,6 +29,127 @@ function muatSupplier() {
   }
 
   tampilkanSupplier();
+}
+function muatHistoriHarga() {
+  const dataHistori = localStorage.getItem(HISTORY_KEY);
+
+  if (dataHistori) {
+    historiHargaList = JSON.parse(dataHistori);
+  } else {
+    historiHargaList = [];
+  }
+
+  tampilkanHistoriHarga();
+}
+
+function simpanHistoriHarga() {
+  const namaProject = document.getElementById("namaProject").value || "-";
+  const namaClient = document.getElementById("namaClient").value || "-";
+  const tanggalEstimasi = document.getElementById("tanggalEstimasi").value || new Date().toISOString().slice(0, 10);
+
+  const semuaBaris = document.querySelectorAll("#daftarItem tr");
+
+  semuaBaris.forEach(function(baris) {
+    const selects = baris.querySelectorAll("select");
+    const inputs = baris.querySelectorAll("input");
+
+    const kategori = selects[0].value;
+    const item = inputs[0].value || "-";
+    const satuan = selects[1].value;
+
+    const supplierUtama = selects[2].value || "-";
+    const hargaUtama = Number(inputs[1].value) || 0;
+
+    const supplierPembanding1 = selects[3].value || "-";
+    const hargaPembanding1 = Number(inputs[2].value) || 0;
+
+    const supplierPembanding2 = selects[4].value || "-";
+    const hargaPembanding2 = Number(inputs[3].value) || 0;
+
+    const pilihanHarga = [
+      { supplier: supplierUtama, harga: hargaUtama },
+      { supplier: supplierPembanding1, harga: hargaPembanding1 },
+      { supplier: supplierPembanding2, harga: hargaPembanding2 }
+    ];
+
+    pilihanHarga.forEach(function(pilihan) {
+      if (pilihan.supplier !== "-" && pilihan.harga > 0) {
+        historiHargaList.push({
+          tanggal: tanggalEstimasi,
+          project: namaProject,
+          client: namaClient,
+          kategori: kategori,
+          item: item,
+          satuan: satuan,
+          supplier: pilihan.supplier,
+          harga: pilihan.harga
+        });
+      }
+    });
+  });
+
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(historiHargaList));
+  tampilkanHistoriHarga();
+
+  alert("Histori harga berhasil disimpan.");
+}
+
+function tampilkanHistoriHarga() {
+  const container = document.getElementById("historiHargaView");
+  if (!container) return;
+
+  if (historiHargaList.length === 0) {
+    container.innerHTML = "<p>Belum ada histori harga.</p>";
+    return;
+  }
+
+  let html = `
+    <table class="history-table">
+      <thead>
+        <tr>
+          <th>Tanggal</th>
+          <th>Project</th>
+          <th>Client</th>
+          <th>Kategori</th>
+          <th>Item</th>
+          <th>Supplier</th>
+          <th>Satuan</th>
+          <th>Harga</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+
+  historiHargaList.slice().reverse().forEach(function(data) {
+    html += `
+      <tr>
+        <td>${data.tanggal}</td>
+        <td>${data.project}</td>
+        <td>${data.client}</td>
+        <td>${data.kategori}</td>
+        <td>${data.item}</td>
+        <td>${data.supplier}</td>
+        <td>${data.satuan}</td>
+        <td>${formatRupiah(data.harga)}</td>
+      </tr>
+    `;
+  });
+
+  html += `
+      </tbody>
+    </table>
+  `;
+
+  container.innerHTML = html;
+}
+
+function resetHistoriHarga() {
+  const yakin = confirm("Yakin mau reset semua histori harga?");
+  if (!yakin) return;
+
+  localStorage.removeItem(HISTORY_KEY);
+  historiHargaList = [];
+  tampilkanHistoriHarga();
 }
 
 function simpanSupplier() {
@@ -558,4 +681,5 @@ function tampilkanRingkasanKategori(data) {
 }
 
 muatSupplier();
+muatHistoriHarga();
 muatData();
