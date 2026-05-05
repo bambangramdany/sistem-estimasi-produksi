@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Sistem Estimasi Produksi</title>
+</head>
+<body>
+  <h1>Sistem Estimasi Produksi</h1>
+  <p>Website pertama saya berhasil dibuat.</p>
+
+  <h2>Estimasi Booth Sederhana</h2>
+
+  <label>Panjang Booth (meter):</label><br>
+  <input id="panjang" type="number"><br><br>
+
+  <label>Lebar Booth (meter):</label><br>
+  <input id="lebar" type="number"><br><br>
+
+  <label>Harga per meter persegi:</label><br>
+  <input id="harga" type="number" value="1500000"><br><br>
+
+  <button onclick="hitungEstimasi()">Hitung Estimasi</button>
+
+  <h3 id="hasil"></h3>
+
+  <script>
+    function hitungEstimasi() {
+      const panjang = document.getElementById("panjang").value;
+      const lebar = document.getElementById("lebar").value;
+      const harga = document.getElementById("harga").value;
+
+      const luas = panjang * lebar;
+      const total = luas * harga;
+
+      document.getElementById("hasil").innerText =
+        "Estimasi biaya: Rp " + total.toLocaleString("id-ID");
+    }
+  </script>
+</body>
+</html>
