@@ -166,7 +166,11 @@ function buatBaris(data = {}) {
         ${satuanOptions(data.satuan || "paket")}
       </select>
     </td>
-    <td><input type="text" value="${data.supplier || ""}" placeholder="Nama supplier" oninput="simpanData()"></td>
+    <td>
+  <select class="supplierSelect" onchange="simpanData()">
+    ${supplierOptions(data.supplier || "")}
+  </select>
+</td>
     <td><input type="number" value="${data.qty || 1}" oninput="hitungEstimasi(); simpanData();"></td>
     <td><input type="number" value="${data.hppSatuan || 0}" oninput="hitungEstimasi(); simpanData();"></td>
     <td><input type="number" value="${data.marginPersen || 20}" oninput="hitungEstimasi(); simpanData();"></td>
