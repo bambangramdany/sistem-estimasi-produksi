@@ -9,15 +9,11 @@
       background: #f5f5f5;
     }
 
-    h1 {
-      color: #222;
-    }
-
     .container {
       background: white;
       padding: 25px;
       border-radius: 12px;
-      max-width: 900px;
+      max-width: 1000px;
       margin: auto;
       box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     }
@@ -31,7 +27,6 @@
     th, td {
       border: 1px solid #ddd;
       padding: 10px;
-      text-align: left;
     }
 
     th {
@@ -46,8 +41,9 @@
     }
 
     button {
-      margin-top: 20px;
-      padding: 12px 20px;
+      margin-top: 15px;
+      margin-right: 8px;
+      padding: 10px 16px;
       background: #222;
       color: white;
       border: none;
@@ -57,6 +53,10 @@
 
     button:hover {
       background: #444;
+    }
+
+    .hapus {
+      background: #b00020;
     }
 
     .result {
@@ -78,7 +78,7 @@
 
   <div class="container">
     <h1>Sistem Estimasi Produksi</h1>
-    <p>Versi 2: Estimasi beberapa item produksi event.</p>
+    <p>Versi 3: Bisa tambah dan hapus item produksi sendiri.</p>
 
     <label>Nama Project:</label>
     <input id="namaProject" type="text" placeholder="Contoh: Booth GIIAS 2026">
@@ -90,66 +90,42 @@
           <th>Qty</th>
           <th>Harga Satuan</th>
           <th>Total</th>
+          <th>Aksi</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody id="daftarItem">
         <tr>
-          <td>Booth / Konstruksi</td>
-          <td><input id="qtyBooth" type="number" value="1"></td>
-          <td><input id="hargaBooth" type="number" value="25000000"></td>
-          <td id="totalBooth">Rp 0</td>
+          <td><input type="text" value="Booth / Konstruksi"></td>
+          <td><input type="number" value="1" oninput="hitungEstimasi()"></td>
+          <td><input type="number" value="25000000" oninput="hitungEstimasi()"></td>
+          <td class="totalItem">Rp 0</td>
+          <td><button class="hapus" onclick="hapusItem(this)">Hapus</button></td>
         </tr>
 
         <tr>
-          <td>Backdrop</td>
-          <td><input id="qtyBackdrop" type="number" value="1"></td>
-          <td><input id="hargaBackdrop" type="number" value="5000000"></td>
-          <td id="totalBackdrop">Rp 0</td>
+          <td><input type="text" value="LED Screen"></td>
+          <td><input type="number" value="1" oninput="hitungEstimasi()"></td>
+          <td><input type="number" value="10000000" oninput="hitungEstimasi()"></td>
+          <td class="totalItem">Rp 0</td>
+          <td><button class="hapus" onclick="hapusItem(this)">Hapus</button></td>
         </tr>
 
         <tr>
-          <td>LED Screen</td>
-          <td><input id="qtyLed" type="number" value="1"></td>
-          <td><input id="hargaLed" type="number" value="10000000"></td>
-          <td id="totalLed">Rp 0</td>
-        </tr>
-
-        <tr>
-          <td>Sound System</td>
-          <td><input id="qtySound" type="number" value="1"></td>
-          <td><input id="hargaSound" type="number" value="7500000"></td>
-          <td id="totalSound">Rp 0</td>
-        </tr>
-
-        <tr>
-          <td>Lighting</td>
-          <td><input id="qtyLighting" type="number" value="1"></td>
-          <td><input id="hargaLighting" type="number" value="6000000"></td>
-          <td id="totalLighting">Rp 0</td>
-        </tr>
-
-        <tr>
-          <td>Manpower / Crew</td>
-          <td><input id="qtyManpower" type="number" value="5"></td>
-          <td><input id="hargaManpower" type="number" value="350000"></td>
-          <td id="totalManpower">Rp 0</td>
-        </tr>
-
-        <tr>
-          <td>Transport / Loading</td>
-          <td><input id="qtyTransport" type="number" value="1"></td>
-          <td><input id="hargaTransport" type="number" value="3000000"></td>
-          <td id="totalTransport">Rp 0</td>
+          <td><input type="text" value="Sound System"></td>
+          <td><input type="number" value="1" oninput="hitungEstimasi()"></td>
+          <td><input type="number" value="7500000" oninput="hitungEstimasi()"></td>
+          <td class="totalItem">Rp 0</td>
+          <td><button class="hapus" onclick="hapusItem(this)">Hapus</button></td>
         </tr>
       </tbody>
     </table>
 
-    <br>
+    <button onclick="tambahItem()">+ Tambah Item</button>
+
+    <br><br>
 
     <label>Markup / Profit (%)</label>
-    <input id="markup" type="number" value="20">
-
-    <button onclick="hitungEstimasi()">Hitung Estimasi</button>
+    <input id="markup" type="number" value="20" oninput="hitungEstimasi()">
 
     <div class="result">
       <p>Subtotal Produksi: <strong id="subtotal">Rp 0</strong></p>
@@ -164,39 +140,44 @@
       return "Rp " + angka.toLocaleString("id-ID");
     }
 
-    function ambilNilai(id) {
-      return Number(document.getElementById(id).value) || 0;
+    function tambahItem() {
+      const daftarItem = document.getElementById("daftarItem");
+
+      const barisBaru = document.createElement("tr");
+
+      barisBaru.innerHTML = `
+        <td><input type="text" placeholder="Nama item"></td>
+        <td><input type="number" value="1" oninput="hitungEstimasi()"></td>
+        <td><input type="number" value="0" oninput="hitungEstimasi()"></td>
+        <td class="totalItem">Rp 0</td>
+        <td><button class="hapus" onclick="hapusItem(this)">Hapus</button></td>
+      `;
+
+      daftarItem.appendChild(barisBaru);
+      hitungEstimasi();
     }
 
-    function hitungItem(qtyId, hargaId, totalId) {
-      const qty = ambilNilai(qtyId);
-      const harga = ambilNilai(hargaId);
-      const total = qty * harga;
-
-      document.getElementById(totalId).innerText = formatRupiah(total);
-
-      return total;
+    function hapusItem(tombol) {
+      const baris = tombol.parentElement.parentElement;
+      baris.remove();
+      hitungEstimasi();
     }
 
     function hitungEstimasi() {
-      const totalBooth = hitungItem("qtyBooth", "hargaBooth", "totalBooth");
-      const totalBackdrop = hitungItem("qtyBackdrop", "hargaBackdrop", "totalBackdrop");
-      const totalLed = hitungItem("qtyLed", "hargaLed", "totalLed");
-      const totalSound = hitungItem("qtySound", "hargaSound", "totalSound");
-      const totalLighting = hitungItem("qtyLighting", "hargaLighting", "totalLighting");
-      const totalManpower = hitungItem("qtyManpower", "hargaManpower", "totalManpower");
-      const totalTransport = hitungItem("qtyTransport", "hargaTransport", "totalTransport");
+      const semuaBaris = document.querySelectorAll("#daftarItem tr");
+      let subtotal = 0;
 
-      const subtotal =
-        totalBooth +
-        totalBackdrop +
-        totalLed +
-        totalSound +
-        totalLighting +
-        totalManpower +
-        totalTransport;
+      semuaBaris.forEach(function(baris) {
+        const input = baris.querySelectorAll("input");
+        const qty = Number(input[1].value) || 0;
+        const harga = Number(input[2].value) || 0;
+        const total = qty * harga;
 
-      const markupPersen = ambilNilai("markup");
+        baris.querySelector(".totalItem").innerText = formatRupiah(total);
+        subtotal += total;
+      });
+
+      const markupPersen = Number(document.getElementById("markup").value) || 0;
       const nilaiMarkup = subtotal * markupPersen / 100;
       const grandTotal = subtotal + nilaiMarkup;
 
@@ -204,6 +185,8 @@
       document.getElementById("nilaiMarkup").innerText = formatRupiah(nilaiMarkup);
       document.getElementById("grandTotal").innerText = formatRupiah(grandTotal);
     }
+
+    hitungEstimasi();
   </script>
 
 </body>
