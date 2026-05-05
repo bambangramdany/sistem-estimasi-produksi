@@ -13,31 +13,45 @@
       background: white;
       padding: 25px;
       border-radius: 12px;
-      max-width: 1000px;
+      max-width: 1200px;
       margin: auto;
       box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    h1 {
+      margin-bottom: 5px;
+    }
+
+    p {
+      color: #555;
+    }
+
+    label {
+      font-weight: bold;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 20px;
+      font-size: 14px;
     }
 
     th, td {
       border: 1px solid #ddd;
-      padding: 10px;
+      padding: 8px;
+      vertical-align: middle;
     }
 
     th {
       background: #222;
       color: white;
-    }
-
-    input {
-      width: 100%;
-      padding: 8px;
-      box-sizing: border-box;
     }
 
     button {
@@ -64,13 +78,25 @@
       background: #f0f0f0;
       padding: 20px;
       border-radius: 10px;
-      font-size: 18px;
+      font-size: 17px;
     }
 
     .highlight {
-      font-size: 24px;
+      font-size: 26px;
       font-weight: bold;
       color: #0a7c3b;
+    }
+
+    .summary-box {
+      margin-top: 20px;
+      background: #fafafa;
+      border: 1px solid #ddd;
+      padding: 15px;
+      border-radius: 10px;
+    }
+
+    .summary-box h3 {
+      margin-top: 0;
     }
   </style>
 </head>
@@ -78,7 +104,7 @@
 
   <div class="container">
     <h1>Sistem Estimasi Produksi</h1>
-    <p>Versi 3: Bisa tambah dan hapus item produksi sendiri.</p>
+    <p>Versi 4: Kategori item, HPP, margin per item, dan harga jual.</p>
 
     <label>Nama Project:</label>
     <input id="namaProject" type="text" placeholder="Contoh: Booth GIIAS 2026">
@@ -86,35 +112,63 @@
     <table>
       <thead>
         <tr>
+          <th>Kategori</th>
           <th>Item Produksi</th>
           <th>Qty</th>
-          <th>Harga Satuan</th>
-          <th>Total</th>
+          <th>HPP / Modal Satuan</th>
+          <th>Margin %</th>
+          <th>Harga Jual Satuan</th>
+          <th>Total HPP</th>
+          <th>Total Jual</th>
+          <th>Profit</th>
           <th>Aksi</th>
         </tr>
       </thead>
+
       <tbody id="daftarItem">
         <tr>
+          <td>
+            <select onchange="hitungEstimasi()">
+              <option>Konstruksi</option>
+              <option>Multimedia</option>
+              <option>Sound</option>
+              <option>Lighting</option>
+              <option>Manpower</option>
+              <option>Transport</option>
+              <option>Lain-lain</option>
+            </select>
+          </td>
           <td><input type="text" value="Booth / Konstruksi"></td>
           <td><input type="number" value="1" oninput="hitungEstimasi()"></td>
           <td><input type="number" value="25000000" oninput="hitungEstimasi()"></td>
-          <td class="totalItem">Rp 0</td>
+          <td><input type="number" value="20" oninput="hitungEstimasi()"></td>
+          <td class="hargaJualSatuan">Rp 0</td>
+          <td class="totalHpp">Rp 0</td>
+          <td class="totalJual">Rp 0</td>
+          <td class="profitItem">Rp 0</td>
           <td><button class="hapus" onclick="hapusItem(this)">Hapus</button></td>
         </tr>
 
         <tr>
+          <td>
+            <select onchange="hitungEstimasi()">
+              <option>Multimedia</option>
+              <option>Konstruksi</option>
+              <option>Sound</option>
+              <option>Lighting</option>
+              <option>Manpower</option>
+              <option>Transport</option>
+              <option>Lain-lain</option>
+            </select>
+          </td>
           <td><input type="text" value="LED Screen"></td>
           <td><input type="number" value="1" oninput="hitungEstimasi()"></td>
           <td><input type="number" value="10000000" oninput="hitungEstimasi()"></td>
-          <td class="totalItem">Rp 0</td>
-          <td><button class="hapus" onclick="hapusItem(this)">Hapus</button></td>
-        </tr>
-
-        <tr>
-          <td><input type="text" value="Sound System"></td>
-          <td><input type="number" value="1" oninput="hitungEstimasi()"></td>
-          <td><input type="number" value="7500000" oninput="hitungEstimasi()"></td>
-          <td class="totalItem">Rp 0</td>
+          <td><input type="number" value="15" oninput="hitungEstimasi()"></td>
+          <td class="hargaJualSatuan">Rp 0</td>
+          <td class="totalHpp">Rp 0</td>
+          <td class="totalJual">Rp 0</td>
+          <td class="profitItem">Rp 0</td>
           <td><button class="hapus" onclick="hapusItem(this)">Hapus</button></td>
         </tr>
       </tbody>
@@ -122,16 +176,16 @@
 
     <button onclick="tambahItem()">+ Tambah Item</button>
 
-    <br><br>
-
-    <label>Markup / Profit (%)</label>
-    <input id="markup" type="number" value="20" oninput="hitungEstimasi()">
-
     <div class="result">
-      <p>Subtotal Produksi: <strong id="subtotal">Rp 0</strong></p>
-      <p>Markup / Profit: <strong id="nilaiMarkup">Rp 0</strong></p>
+      <p>Total HPP / Modal: <strong id="grandHpp">Rp 0</strong></p>
+      <p>Total Profit: <strong id="grandProfit">Rp 0</strong></p>
       <p>Total Penawaran:</p>
-      <p class="highlight" id="grandTotal">Rp 0</p>
+      <p class="highlight" id="grandJual">Rp 0</p>
+    </div>
+
+    <div class="summary-box">
+      <h3>Ringkasan per Kategori</h3>
+      <div id="ringkasanKategori"></div>
     </div>
   </div>
 
@@ -146,10 +200,25 @@
       const barisBaru = document.createElement("tr");
 
       barisBaru.innerHTML = `
+        <td>
+          <select onchange="hitungEstimasi()">
+            <option>Konstruksi</option>
+            <option>Multimedia</option>
+            <option>Sound</option>
+            <option>Lighting</option>
+            <option>Manpower</option>
+            <option>Transport</option>
+            <option>Lain-lain</option>
+          </select>
+        </td>
         <td><input type="text" placeholder="Nama item"></td>
         <td><input type="number" value="1" oninput="hitungEstimasi()"></td>
         <td><input type="number" value="0" oninput="hitungEstimasi()"></td>
-        <td class="totalItem">Rp 0</td>
+        <td><input type="number" value="20" oninput="hitungEstimasi()"></td>
+        <td class="hargaJualSatuan">Rp 0</td>
+        <td class="totalHpp">Rp 0</td>
+        <td class="totalJual">Rp 0</td>
+        <td class="profitItem">Rp 0</td>
         <td><button class="hapus" onclick="hapusItem(this)">Hapus</button></td>
       `;
 
@@ -165,25 +234,71 @@
 
     function hitungEstimasi() {
       const semuaBaris = document.querySelectorAll("#daftarItem tr");
-      let subtotal = 0;
+
+      let grandHpp = 0;
+      let grandJual = 0;
+      let grandProfit = 0;
+
+      let kategoriSummary = {};
 
       semuaBaris.forEach(function(baris) {
+        const kategori = baris.querySelector("select").value;
         const input = baris.querySelectorAll("input");
-        const qty = Number(input[1].value) || 0;
-        const harga = Number(input[2].value) || 0;
-        const total = qty * harga;
 
-        baris.querySelector(".totalItem").innerText = formatRupiah(total);
-        subtotal += total;
+        const qty = Number(input[1].value) || 0;
+        const hppSatuan = Number(input[2].value) || 0;
+        const marginPersen = Number(input[3].value) || 0;
+
+        const hargaJualSatuan = hppSatuan + (hppSatuan * marginPersen / 100);
+        const totalHpp = qty * hppSatuan;
+        const totalJual = qty * hargaJualSatuan;
+        const profitItem = totalJual - totalHpp;
+
+        baris.querySelector(".hargaJualSatuan").innerText = formatRupiah(hargaJualSatuan);
+        baris.querySelector(".totalHpp").innerText = formatRupiah(totalHpp);
+        baris.querySelector(".totalJual").innerText = formatRupiah(totalJual);
+        baris.querySelector(".profitItem").innerText = formatRupiah(profitItem);
+
+        grandHpp += totalHpp;
+        grandJual += totalJual;
+        grandProfit += profitItem;
+
+        if (!kategoriSummary[kategori]) {
+          kategoriSummary[kategori] = {
+            hpp: 0,
+            jual: 0,
+            profit: 0
+          };
+        }
+
+        kategoriSummary[kategori].hpp += totalHpp;
+        kategoriSummary[kategori].jual += totalJual;
+        kategoriSummary[kategori].profit += profitItem;
       });
 
-      const markupPersen = Number(document.getElementById("markup").value) || 0;
-      const nilaiMarkup = subtotal * markupPersen / 100;
-      const grandTotal = subtotal + nilaiMarkup;
+      document.getElementById("grandHpp").innerText = formatRupiah(grandHpp);
+      document.getElementById("grandProfit").innerText = formatRupiah(grandProfit);
+      document.getElementById("grandJual").innerText = formatRupiah(grandJual);
 
-      document.getElementById("subtotal").innerText = formatRupiah(subtotal);
-      document.getElementById("nilaiMarkup").innerText = formatRupiah(nilaiMarkup);
-      document.getElementById("grandTotal").innerText = formatRupiah(grandTotal);
+      tampilkanRingkasanKategori(kategoriSummary);
+    }
+
+    function tampilkanRingkasanKategori(data) {
+      const container = document.getElementById("ringkasanKategori");
+      container.innerHTML = "";
+
+      for (let kategori in data) {
+        const item = document.createElement("p");
+
+        item.innerHTML = `
+          <strong>${kategori}</strong><br>
+          HPP: ${formatRupiah(data[kategori].hpp)} |
+          Jual: ${formatRupiah(data[kategori].jual)} |
+          Profit: ${formatRupiah(data[kategori].profit)}
+        `;
+
+        container.appendChild(item);
+      }
     }
 
     hitungEstimasi();
