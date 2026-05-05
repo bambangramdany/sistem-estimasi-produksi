@@ -2,38 +2,209 @@
 <html>
 <head>
   <title>Sistem Estimasi Produksi</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 30px;
+      background: #f5f5f5;
+    }
+
+    h1 {
+      color: #222;
+    }
+
+    .container {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      max-width: 900px;
+      margin: auto;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: left;
+    }
+
+    th {
+      background: #222;
+      color: white;
+    }
+
+    input {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 12px 20px;
+      background: #222;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #444;
+    }
+
+    .result {
+      margin-top: 25px;
+      background: #f0f0f0;
+      padding: 20px;
+      border-radius: 10px;
+      font-size: 18px;
+    }
+
+    .highlight {
+      font-size: 24px;
+      font-weight: bold;
+      color: #0a7c3b;
+    }
+  </style>
 </head>
 <body>
-  <h1>Sistem Estimasi Produksi</h1>
-  <p>Website pertama saya berhasil dibuat.</p>
 
-  <h2>Estimasi Booth Sederhana</h2>
+  <div class="container">
+    <h1>Sistem Estimasi Produksi</h1>
+    <p>Versi 2: Estimasi beberapa item produksi event.</p>
 
-  <label>Panjang Booth (meter):</label><br>
-  <input id="panjang" type="number"><br><br>
+    <label>Nama Project:</label>
+    <input id="namaProject" type="text" placeholder="Contoh: Booth GIIAS 2026">
 
-  <label>Lebar Booth (meter):</label><br>
-  <input id="lebar" type="number"><br><br>
+    <table>
+      <thead>
+        <tr>
+          <th>Item Produksi</th>
+          <th>Qty</th>
+          <th>Harga Satuan</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Booth / Konstruksi</td>
+          <td><input id="qtyBooth" type="number" value="1"></td>
+          <td><input id="hargaBooth" type="number" value="25000000"></td>
+          <td id="totalBooth">Rp 0</td>
+        </tr>
 
-  <label>Harga per meter persegi:</label><br>
-  <input id="harga" type="number" value="1500000"><br><br>
+        <tr>
+          <td>Backdrop</td>
+          <td><input id="qtyBackdrop" type="number" value="1"></td>
+          <td><input id="hargaBackdrop" type="number" value="5000000"></td>
+          <td id="totalBackdrop">Rp 0</td>
+        </tr>
 
-  <button onclick="hitungEstimasi()">Hitung Estimasi</button>
+        <tr>
+          <td>LED Screen</td>
+          <td><input id="qtyLed" type="number" value="1"></td>
+          <td><input id="hargaLed" type="number" value="10000000"></td>
+          <td id="totalLed">Rp 0</td>
+        </tr>
 
-  <h3 id="hasil"></h3>
+        <tr>
+          <td>Sound System</td>
+          <td><input id="qtySound" type="number" value="1"></td>
+          <td><input id="hargaSound" type="number" value="7500000"></td>
+          <td id="totalSound">Rp 0</td>
+        </tr>
+
+        <tr>
+          <td>Lighting</td>
+          <td><input id="qtyLighting" type="number" value="1"></td>
+          <td><input id="hargaLighting" type="number" value="6000000"></td>
+          <td id="totalLighting">Rp 0</td>
+        </tr>
+
+        <tr>
+          <td>Manpower / Crew</td>
+          <td><input id="qtyManpower" type="number" value="5"></td>
+          <td><input id="hargaManpower" type="number" value="350000"></td>
+          <td id="totalManpower">Rp 0</td>
+        </tr>
+
+        <tr>
+          <td>Transport / Loading</td>
+          <td><input id="qtyTransport" type="number" value="1"></td>
+          <td><input id="hargaTransport" type="number" value="3000000"></td>
+          <td id="totalTransport">Rp 0</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <br>
+
+    <label>Markup / Profit (%)</label>
+    <input id="markup" type="number" value="20">
+
+    <button onclick="hitungEstimasi()">Hitung Estimasi</button>
+
+    <div class="result">
+      <p>Subtotal Produksi: <strong id="subtotal">Rp 0</strong></p>
+      <p>Markup / Profit: <strong id="nilaiMarkup">Rp 0</strong></p>
+      <p>Total Penawaran:</p>
+      <p class="highlight" id="grandTotal">Rp 0</p>
+    </div>
+  </div>
 
   <script>
+    function formatRupiah(angka) {
+      return "Rp " + angka.toLocaleString("id-ID");
+    }
+
+    function ambilNilai(id) {
+      return Number(document.getElementById(id).value) || 0;
+    }
+
+    function hitungItem(qtyId, hargaId, totalId) {
+      const qty = ambilNilai(qtyId);
+      const harga = ambilNilai(hargaId);
+      const total = qty * harga;
+
+      document.getElementById(totalId).innerText = formatRupiah(total);
+
+      return total;
+    }
+
     function hitungEstimasi() {
-      const panjang = document.getElementById("panjang").value;
-      const lebar = document.getElementById("lebar").value;
-      const harga = document.getElementById("harga").value;
+      const totalBooth = hitungItem("qtyBooth", "hargaBooth", "totalBooth");
+      const totalBackdrop = hitungItem("qtyBackdrop", "hargaBackdrop", "totalBackdrop");
+      const totalLed = hitungItem("qtyLed", "hargaLed", "totalLed");
+      const totalSound = hitungItem("qtySound", "hargaSound", "totalSound");
+      const totalLighting = hitungItem("qtyLighting", "hargaLighting", "totalLighting");
+      const totalManpower = hitungItem("qtyManpower", "hargaManpower", "totalManpower");
+      const totalTransport = hitungItem("qtyTransport", "hargaTransport", "totalTransport");
 
-      const luas = panjang * lebar;
-      const total = luas * harga;
+      const subtotal =
+        totalBooth +
+        totalBackdrop +
+        totalLed +
+        totalSound +
+        totalLighting +
+        totalManpower +
+        totalTransport;
 
-      document.getElementById("hasil").innerText =
-        "Estimasi biaya: Rp " + total.toLocaleString("id-ID");
+      const markupPersen = ambilNilai("markup");
+      const nilaiMarkup = subtotal * markupPersen / 100;
+      const grandTotal = subtotal + nilaiMarkup;
+
+      document.getElementById("subtotal").innerText = formatRupiah(subtotal);
+      document.getElementById("nilaiMarkup").innerText = formatRupiah(nilaiMarkup);
+      document.getElementById("grandTotal").innerText = formatRupiah(grandTotal);
     }
   </script>
+
 </body>
 </html>
