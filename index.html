@@ -66,6 +66,10 @@
       background: #0a7c3b;
     }
 
+    .reset {
+      background: #9c6500;
+    }
+
     .result {
       margin-top: 25px;
       background: #f0f0f0;
@@ -141,16 +145,16 @@
     </div>
 
     <h1>Sistem Estimasi Produksi</h1>
-    <p>Versi 6: Tambah fitur print / export PDF sederhana.</p>
+    <p>Versi 7: Data otomatis tersimpan di browser.</p>
 
     <label>Nama Project:</label>
-    <input id="namaProject" type="text" placeholder="Contoh: Booth GIIAS 2026">
+    <input id="namaProject" type="text" placeholder="Contoh: Booth GIIAS 2026" oninput="simpanData()">
 
     <label>Nama Client:</label>
-    <input id="namaClient" type="text" placeholder="Contoh: PT ABC Indonesia">
+    <input id="namaClient" type="text" placeholder="Contoh: PT ABC Indonesia" oninput="simpanData()">
 
     <label>Tanggal Estimasi:</label>
-    <input id="tanggalEstimasi" type="date">
+    <input id="tanggalEstimasi" type="date" oninput="simpanData()">
 
     <table>
       <thead>
@@ -171,46 +175,12 @@
         </tr>
       </thead>
 
-      <tbody id="daftarItem">
-        <tr>
-          <td>
-            <select onchange="hitungEstimasi()">
-              <option>Konstruksi</option>
-              <option>Multimedia</option>
-              <option>Sound</option>
-              <option>Lighting</option>
-              <option>Manpower</option>
-              <option>Transport</option>
-              <option>Lain-lain</option>
-            </select>
-          </td>
-          <td><input type="text" value="Booth / Konstruksi"></td>
-          <td>
-            <select>
-              <option>paket</option>
-              <option>unit</option>
-              <option>m²</option>
-              <option>meter</option>
-              <option>hari</option>
-              <option>orang</option>
-            </select>
-          </td>
-          <td><input type="text" value="Vendor Booth A"></td>
-          <td><input type="number" value="1" oninput="hitungEstimasi()"></td>
-          <td><input type="number" value="25000000" oninput="hitungEstimasi()"></td>
-          <td><input type="number" value="20" oninput="hitungEstimasi()"></td>
-          <td class="hargaJualSatuan">Rp 0</td>
-          <td class="totalHpp">Rp 0</td>
-          <td class="totalJual">Rp 0</td>
-          <td class="profitItem">Rp 0</td>
-          <td><textarea placeholder="Catatan teknis"></textarea></td>
-          <td class="no-print"><button class="hapus" onclick="hapusItem(this)">Hapus</button></td>
-        </tr>
-      </tbody>
+      <tbody id="daftarItem"></tbody>
     </table>
 
     <button onclick="tambahItem()">+ Tambah Item</button>
     <button class="print" onclick="window.print()">Print / Export PDF</button>
+    <button class="reset" onclick="resetData()">Reset Data</button>
 
     <div class="result">
       <p>Total HPP / Modal: <strong id="grandHpp">Rp 0</strong></p>
@@ -226,56 +196,152 @@
   </div>
 
   <script>
+    const STORAGE_KEY = "dataEstimasiProduksi";
+
     function formatRupiah(angka) {
       return "Rp " + Math.round(angka).toLocaleString("id-ID");
     }
 
-    function tambahItem() {
-      const daftarItem = document.getElementById("daftarItem");
-      const barisBaru = document.createElement("tr");
+    function kategoriOptions(selected) {
+      const daftar = ["Konstruksi", "Multimedia", "Sound", "Lighting", "Manpower", "Transport", "Lain-lain"];
+      return daftar.map(item => {
+        return `<option ${item === selected ? "selected" : ""}>${item}</option>`;
+      }).join("");
+    }
 
-      barisBaru.innerHTML = `
+    function satuanOptions(selected) {
+      const daftar = ["paket", "unit", "m²", "meter", "hari", "orang"];
+      return daftar.map(item => {
+        return `<option ${item === selected ? "selected" : ""}>${item}</option>`;
+      }).join("");
+    }
+
+    function buatBaris(data = {}) {
+      const baris = document.createElement("tr");
+
+      baris.innerHTML = `
         <td>
-          <select onchange="hitungEstimasi()">
-            <option>Konstruksi</option>
-            <option>Multimedia</option>
-            <option>Sound</option>
-            <option>Lighting</option>
-            <option>Manpower</option>
-            <option>Transport</option>
-            <option>Lain-lain</option>
+          <select onchange="hitungEstimasi(); simpanData();">
+            ${kategoriOptions(data.kategori || "Konstruksi")}
           </select>
         </td>
-        <td><input type="text" placeholder="Nama item"></td>
+        <td><input type="text" value="${data.item || ""}" placeholder="Nama item" oninput="simpanData()"></td>
         <td>
-          <select>
-            <option>paket</option>
-            <option>unit</option>
-            <option>m²</option>
-            <option>meter</option>
-            <option>hari</option>
-            <option>orang</option>
+          <select onchange="simpanData()">
+            ${satuanOptions(data.satuan || "paket")}
           </select>
         </td>
-        <td><input type="text" placeholder="Nama supplier"></td>
-        <td><input type="number" value="1" oninput="hitungEstimasi()"></td>
-        <td><input type="number" value="0" oninput="hitungEstimasi()"></td>
-        <td><input type="number" value="20" oninput="hitungEstimasi()"></td>
+        <td><input type="text" value="${data.supplier || ""}" placeholder="Nama supplier" oninput="simpanData()"></td>
+        <td><input type="number" value="${data.qty || 1}" oninput="hitungEstimasi(); simpanData();"></td>
+        <td><input type="number" value="${data.hppSatuan || 0}" oninput="hitungEstimasi(); simpanData();"></td>
+        <td><input type="number" value="${data.marginPersen || 20}" oninput="hitungEstimasi(); simpanData();"></td>
         <td class="hargaJualSatuan">Rp 0</td>
         <td class="totalHpp">Rp 0</td>
         <td class="totalJual">Rp 0</td>
         <td class="profitItem">Rp 0</td>
-        <td><textarea placeholder="Catatan teknis"></textarea></td>
+        <td><textarea placeholder="Catatan teknis" oninput="simpanData()">${data.catatan || ""}</textarea></td>
         <td class="no-print"><button class="hapus" onclick="hapusItem(this)">Hapus</button></td>
       `;
 
-      daftarItem.appendChild(barisBaru);
+      document.getElementById("daftarItem").appendChild(baris);
+    }
+
+    function tambahItem() {
+      buatBaris({
+        kategori: "Konstruksi",
+        item: "",
+        satuan: "paket",
+        supplier: "",
+        qty: 1,
+        hppSatuan: 0,
+        marginPersen: 20,
+        catatan: ""
+      });
+
       hitungEstimasi();
+      simpanData();
     }
 
     function hapusItem(tombol) {
       tombol.closest("tr").remove();
       hitungEstimasi();
+      simpanData();
+    }
+
+    function ambilDataDariTabel() {
+      const semuaBaris = document.querySelectorAll("#daftarItem tr");
+      const items = [];
+
+      semuaBaris.forEach(function(baris) {
+        const selects = baris.querySelectorAll("select");
+        const inputs = baris.querySelectorAll("input");
+        const textarea = baris.querySelector("textarea");
+
+        items.push({
+          kategori: selects[0].value,
+          item: inputs[0].value,
+          satuan: selects[1].value,
+          supplier: inputs[1].value,
+          qty: Number(inputs[2].value) || 0,
+          hppSatuan: Number(inputs[3].value) || 0,
+          marginPersen: Number(inputs[4].value) || 0,
+          catatan: textarea.value
+        });
+      });
+
+      return items;
+    }
+
+    function simpanData() {
+      const data = {
+        namaProject: document.getElementById("namaProject").value,
+        namaClient: document.getElementById("namaClient").value,
+        tanggalEstimasi: document.getElementById("tanggalEstimasi").value,
+        items: ambilDataDariTabel()
+      };
+
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+
+    function muatData() {
+      const dataTersimpan = localStorage.getItem(STORAGE_KEY);
+
+      if (dataTersimpan) {
+        const data = JSON.parse(dataTersimpan);
+
+        document.getElementById("namaProject").value = data.namaProject || "";
+        document.getElementById("namaClient").value = data.namaClient || "";
+        document.getElementById("tanggalEstimasi").value = data.tanggalEstimasi || "";
+
+        document.getElementById("daftarItem").innerHTML = "";
+
+        if (data.items && data.items.length > 0) {
+          data.items.forEach(item => buatBaris(item));
+        } else {
+          tambahItem();
+        }
+      } else {
+        buatBaris({
+          kategori: "Konstruksi",
+          item: "Booth / Konstruksi",
+          satuan: "paket",
+          supplier: "Vendor Booth A",
+          qty: 1,
+          hppSatuan: 25000000,
+          marginPersen: 20,
+          catatan: ""
+        });
+      }
+
+      hitungEstimasi();
+    }
+
+    function resetData() {
+      const yakin = confirm("Yakin mau reset semua data estimasi?");
+      if (!yakin) return;
+
+      localStorage.removeItem(STORAGE_KEY);
+      location.reload();
     }
 
     function hitungEstimasi() {
@@ -288,11 +354,11 @@
 
       semuaBaris.forEach(function(baris) {
         const kategori = baris.querySelector("select").value;
-        const input = baris.querySelectorAll("input");
+        const inputs = baris.querySelectorAll("input");
 
-        const qty = Number(input[2].value) || 0;
-        const hppSatuan = Number(input[3].value) || 0;
-        const marginPersen = Number(input[4].value) || 0;
+        const qty = Number(inputs[2].value) || 0;
+        const hppSatuan = Number(inputs[3].value) || 0;
+        const marginPersen = Number(inputs[4].value) || 0;
 
         const hargaJualSatuan = hppSatuan + (hppSatuan * marginPersen / 100);
         const totalHpp = qty * hppSatuan;
@@ -340,7 +406,7 @@
       }
     }
 
-    hitungEstimasi();
+    muatData();
   </script>
 </body>
 </html>
