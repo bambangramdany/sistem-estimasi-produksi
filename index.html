@@ -13,40 +13,33 @@
       background: white;
       padding: 25px;
       border-radius: 12px;
-      max-width: 1200px;
+      max-width: 1400px;
       margin: auto;
       box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     }
 
-    h1 {
-      margin-bottom: 5px;
-    }
-
-    p {
-      color: #555;
-    }
-
-    label {
-      font-weight: bold;
-    }
-
-    input, select {
+    input, select, textarea {
       width: 100%;
       padding: 8px;
       box-sizing: border-box;
+    }
+
+    textarea {
+      height: 45px;
+      resize: vertical;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 20px;
-      font-size: 14px;
+      font-size: 13px;
     }
 
     th, td {
       border: 1px solid #ddd;
-      padding: 8px;
-      vertical-align: middle;
+      padding: 7px;
+      vertical-align: top;
     }
 
     th {
@@ -63,10 +56,6 @@
       border: none;
       border-radius: 8px;
       cursor: pointer;
-    }
-
-    button:hover {
-      background: #444;
     }
 
     .hapus {
@@ -86,25 +75,13 @@
       font-weight: bold;
       color: #0a7c3b;
     }
-
-    .summary-box {
-      margin-top: 20px;
-      background: #fafafa;
-      border: 1px solid #ddd;
-      padding: 15px;
-      border-radius: 10px;
-    }
-
-    .summary-box h3 {
-      margin-top: 0;
-    }
   </style>
 </head>
-<body>
 
+<body>
   <div class="container">
     <h1>Sistem Estimasi Produksi</h1>
-    <p>Versi 4: Kategori item, HPP, margin per item, dan harga jual.</p>
+    <p>Versi 5: Kategori, satuan, supplier, catatan teknis, HPP, margin, dan harga jual.</p>
 
     <label>Nama Project:</label>
     <input id="namaProject" type="text" placeholder="Contoh: Booth GIIAS 2026">
@@ -113,14 +90,17 @@
       <thead>
         <tr>
           <th>Kategori</th>
-          <th>Item Produksi</th>
+          <th>Item</th>
+          <th>Satuan</th>
+          <th>Supplier</th>
           <th>Qty</th>
-          <th>HPP / Modal Satuan</th>
+          <th>HPP Satuan</th>
           <th>Margin %</th>
           <th>Harga Jual Satuan</th>
           <th>Total HPP</th>
           <th>Total Jual</th>
           <th>Profit</th>
+          <th>Catatan</th>
           <th>Aksi</th>
         </tr>
       </thead>
@@ -139,6 +119,17 @@
             </select>
           </td>
           <td><input type="text" value="Booth / Konstruksi"></td>
+          <td>
+            <select>
+              <option>paket</option>
+              <option>unit</option>
+              <option>m²</option>
+              <option>meter</option>
+              <option>hari</option>
+              <option>orang</option>
+            </select>
+          </td>
+          <td><input type="text" value="Vendor Booth A"></td>
           <td><input type="number" value="1" oninput="hitungEstimasi()"></td>
           <td><input type="number" value="25000000" oninput="hitungEstimasi()"></td>
           <td><input type="number" value="20" oninput="hitungEstimasi()"></td>
@@ -146,29 +137,7 @@
           <td class="totalHpp">Rp 0</td>
           <td class="totalJual">Rp 0</td>
           <td class="profitItem">Rp 0</td>
-          <td><button class="hapus" onclick="hapusItem(this)">Hapus</button></td>
-        </tr>
-
-        <tr>
-          <td>
-            <select onchange="hitungEstimasi()">
-              <option>Multimedia</option>
-              <option>Konstruksi</option>
-              <option>Sound</option>
-              <option>Lighting</option>
-              <option>Manpower</option>
-              <option>Transport</option>
-              <option>Lain-lain</option>
-            </select>
-          </td>
-          <td><input type="text" value="LED Screen"></td>
-          <td><input type="number" value="1" oninput="hitungEstimasi()"></td>
-          <td><input type="number" value="10000000" oninput="hitungEstimasi()"></td>
-          <td><input type="number" value="15" oninput="hitungEstimasi()"></td>
-          <td class="hargaJualSatuan">Rp 0</td>
-          <td class="totalHpp">Rp 0</td>
-          <td class="totalJual">Rp 0</td>
-          <td class="profitItem">Rp 0</td>
+          <td><textarea placeholder="Catatan teknis"></textarea></td>
           <td><button class="hapus" onclick="hapusItem(this)">Hapus</button></td>
         </tr>
       </tbody>
@@ -183,7 +152,7 @@
       <p class="highlight" id="grandJual">Rp 0</p>
     </div>
 
-    <div class="summary-box">
+    <div class="result">
       <h3>Ringkasan per Kategori</h3>
       <div id="ringkasanKategori"></div>
     </div>
@@ -191,12 +160,11 @@
 
   <script>
     function formatRupiah(angka) {
-      return "Rp " + angka.toLocaleString("id-ID");
+      return "Rp " + Math.round(angka).toLocaleString("id-ID");
     }
 
     function tambahItem() {
       const daftarItem = document.getElementById("daftarItem");
-
       const barisBaru = document.createElement("tr");
 
       barisBaru.innerHTML = `
@@ -212,6 +180,17 @@
           </select>
         </td>
         <td><input type="text" placeholder="Nama item"></td>
+        <td>
+          <select>
+            <option>paket</option>
+            <option>unit</option>
+            <option>m²</option>
+            <option>meter</option>
+            <option>hari</option>
+            <option>orang</option>
+          </select>
+        </td>
+        <td><input type="text" placeholder="Nama supplier"></td>
         <td><input type="number" value="1" oninput="hitungEstimasi()"></td>
         <td><input type="number" value="0" oninput="hitungEstimasi()"></td>
         <td><input type="number" value="20" oninput="hitungEstimasi()"></td>
@@ -219,6 +198,7 @@
         <td class="totalHpp">Rp 0</td>
         <td class="totalJual">Rp 0</td>
         <td class="profitItem">Rp 0</td>
+        <td><textarea placeholder="Catatan teknis"></textarea></td>
         <td><button class="hapus" onclick="hapusItem(this)">Hapus</button></td>
       `;
 
@@ -227,8 +207,7 @@
     }
 
     function hapusItem(tombol) {
-      const baris = tombol.parentElement.parentElement;
-      baris.remove();
+      tombol.closest("tr").remove();
       hitungEstimasi();
     }
 
@@ -238,16 +217,15 @@
       let grandHpp = 0;
       let grandJual = 0;
       let grandProfit = 0;
-
       let kategoriSummary = {};
 
       semuaBaris.forEach(function(baris) {
         const kategori = baris.querySelector("select").value;
         const input = baris.querySelectorAll("input");
 
-        const qty = Number(input[1].value) || 0;
-        const hppSatuan = Number(input[2].value) || 0;
-        const marginPersen = Number(input[3].value) || 0;
+        const qty = Number(input[2].value) || 0;
+        const hppSatuan = Number(input[3].value) || 0;
+        const marginPersen = Number(input[4].value) || 0;
 
         const hargaJualSatuan = hppSatuan + (hppSatuan * marginPersen / 100);
         const totalHpp = qty * hppSatuan;
@@ -264,11 +242,7 @@
         grandProfit += profitItem;
 
         if (!kategoriSummary[kategori]) {
-          kategoriSummary[kategori] = {
-            hpp: 0,
-            jual: 0,
-            profit: 0
-          };
+          kategoriSummary[kategori] = { hpp: 0, jual: 0, profit: 0 };
         }
 
         kategoriSummary[kategori].hpp += totalHpp;
@@ -288,21 +262,18 @@
       container.innerHTML = "";
 
       for (let kategori in data) {
-        const item = document.createElement("p");
-
-        item.innerHTML = `
+        const p = document.createElement("p");
+        p.innerHTML = `
           <strong>${kategori}</strong><br>
           HPP: ${formatRupiah(data[kategori].hpp)} |
           Jual: ${formatRupiah(data[kategori].jual)} |
           Profit: ${formatRupiah(data[kategori].profit)}
         `;
-
-        container.appendChild(item);
+        container.appendChild(p);
       }
     }
 
     hitungEstimasi();
   </script>
-
 </body>
 </html>
