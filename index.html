@@ -47,9 +47,20 @@
       <tbody id="daftarItem"></tbody>
     </table>
 
-    <button onclick="tambahItem()">+ Tambah Item</button>
-    <button class="print" onclick="window.print()">Print / Export PDF</button>
-    <button class="reset" onclick="resetData()">Reset Data</button>
+    <div class="template-buttons no-print">
+  <h3>Template Item Produksi</h3>
+  <button onclick="tambahTemplate('booth')">+ Booth</button>
+  <button onclick="tambahTemplate('backdrop')">+ Backdrop</button>
+  <button onclick="tambahTemplate('led')">+ LED</button>
+  <button onclick="tambahTemplate('sound')">+ Sound</button>
+  <button onclick="tambahTemplate('lighting')">+ Lighting</button>
+  <button onclick="tambahTemplate('crew')">+ Crew</button>
+  <button onclick="tambahTemplate('transport')">+ Transport</button>
+</div>
+
+<button onclick="tambahItem()">+ Tambah Item Kosong</button>
+<button class="print" onclick="window.print()">Print / Export PDF</button>
+<button class="reset" onclick="resetData()">Reset Data</button>
 
     <div class="result">
       <p>Total HPP / Modal: <strong id="grandHpp">Rp 0</strong></p>
