@@ -49,7 +49,91 @@ function buatBaris(data = {}) {
 
   document.getElementById("daftarItem").appendChild(baris);
 }
+const templateItems = {
+  booth: {
+    kategori: "Konstruksi",
+    item: "Booth / Konstruksi",
+    satuan: "paket",
+    supplier: "",
+    qty: 1,
+    hppSatuan: 25000000,
+    marginPersen: 20,
+    catatan: "Estimasi booth standard. Detail ukuran, material, dan finishing perlu dikonfirmasi."
+  },
+  backdrop: {
+    kategori: "Konstruksi",
+    item: "Backdrop Event",
+    satuan: "meter",
+    supplier: "",
+    qty: 1,
+    hppSatuan: 2500000,
+    marginPersen: 20,
+    catatan: "Backdrop rangka hollow/multipleks. Ukuran dan finishing menyesuaikan desain."
+  },
+  led: {
+    kategori: "Multimedia",
+    item: "LED Screen",
+    satuan: "m²",
+    supplier: "",
+    qty: 1,
+    hppSatuan: 850000,
+    marginPersen: 15,
+    catatan: "Harga estimasi per m². Belum termasuk rigging tambahan jika dibutuhkan."
+  },
+  sound: {
+    kategori: "Sound",
+    item: "Sound System",
+    satuan: "paket",
+    supplier: "",
+    qty: 1,
+    hppSatuan: 7500000,
+    marginPersen: 15,
+    catatan: "Paket sound standard event indoor. Perlu disesuaikan dengan venue dan jumlah audience."
+  },
+  lighting: {
+    kategori: "Lighting",
+    item: "Lighting System",
+    satuan: "paket",
+    supplier: "",
+    qty: 1,
+    hppSatuan: 6500000,
+    marginPersen: 15,
+    catatan: "Paket lighting standard. Detail titik lampu mengikuti konsep panggung."
+  },
+  crew: {
+    kategori: "Manpower",
+    item: "Crew Produksi",
+    satuan: "orang",
+    supplier: "",
+    qty: 5,
+    hppSatuan: 350000,
+    marginPersen: 20,
+    catatan: "Crew loading, setup, standby, dan dismantle."
+  },
+  transport: {
+    kategori: "Transport",
+    item: "Transport / Loading",
+    satuan: "paket",
+    supplier: "",
+    qty: 1,
+    hppSatuan: 3000000,
+    marginPersen: 15,
+    catatan: "Estimasi transport barang produksi. Menyesuaikan lokasi dan jumlah armada."
+  }
+};
 
+function tambahTemplate(namaTemplate) {
+  const dataTemplate = templateItems[namaTemplate];
+
+  if (!dataTemplate) {
+    alert("Template tidak ditemukan.");
+    return;
+  }
+
+  buatBaris(dataTemplate);
+  hitungEstimasi();
+  simpanData();
+}
 function tambahItem() {
   buatBaris({
     kategori: "Konstruksi",
