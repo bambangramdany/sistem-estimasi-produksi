@@ -1,0 +1,130 @@
+body {
+  font-family: Arial, sans-serif;
+  padding: 30px;
+  background: #f5f5f5;
+}
+
+.container {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  max-width: 1400px;
+  margin: auto;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+textarea {
+  height: 45px;
+  resize: vertical;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  font-size: 13px;
+}
+
+th, td {
+  border: 1px solid #ddd;
+  padding: 7px;
+  vertical-align: top;
+}
+
+th {
+  background: #222;
+  color: white;
+}
+
+button {
+  margin-top: 15px;
+  margin-right: 8px;
+  padding: 10px 16px;
+  background: #222;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.hapus {
+  background: #b00020;
+}
+
+.print {
+  background: #0a7c3b;
+}
+
+.reset {
+  background: #9c6500;
+}
+
+.result {
+  margin-top: 25px;
+  background: #f0f0f0;
+  padding: 20px;
+  border-radius: 10px;
+  font-size: 17px;
+}
+
+.highlight {
+  font-size: 26px;
+  font-weight: bold;
+  color: #0a7c3b;
+}
+
+.print-only {
+  display: none;
+}
+
+@media print {
+  body {
+    background: white;
+    padding: 0;
+  }
+
+  .container {
+    box-shadow: none;
+    max-width: 100%;
+    border-radius: 0;
+  }
+
+  button, .hapus, .no-print {
+    display: none !important;
+  }
+
+  .print-only {
+    display: block;
+  }
+
+  input, select, textarea {
+    border: none;
+    padding: 0;
+    font-size: 12px;
+    appearance: none;
+  }
+
+  textarea {
+    height: auto;
+  }
+
+  th {
+    background: #ddd !important;
+    color: #000 !important;
+  }
+
+  table {
+    font-size: 11px;
+  }
+
+  .result {
+    border: 1px solid #ddd;
+    background: white;
+  }
+}
