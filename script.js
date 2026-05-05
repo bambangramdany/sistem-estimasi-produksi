@@ -1,5 +1,136 @@
 const STORAGE_KEY = "dataEstimasiProduksi";
+function muatSupplier() {
+  const dataSupplier = localStorage.getItem(SUPPLIER_KEY);
 
+  if (dataSupplier) {
+    supplierList = JSON.parse(dataSupplier);
+  } else {
+    supplierList = [
+      {
+        nama: "Vendor Booth A",
+        kategori: "Konstruksi",
+        kontak: "Belum diisi"
+      },
+      {
+        nama: "Vendor LED A",
+        kategori: "Multimedia",
+        kontak: "Belum diisi"
+      },
+      {
+        nama: "Vendor Sound A",
+        kategori: "Sound",
+        kontak: "Belum diisi"
+      }
+    ];
+
+    simpanSupplier();
+  }
+
+  tampilkanSupplier();
+}
+
+function simpanSupplier() {
+  localStorage.setItem(SUPPLIER_KEY, JSON.stringify(supplierList));
+}
+
+function tambahSupplier() {
+  const nama = document.getElementById("namaSupplierBaru").value.trim();
+  const kategori = document.getElementById("kategoriSupplierBaru").value.trim();
+  const kontak = document.getElementById("kontakSupplierBaru").value.trim();
+
+  if (!nama) {
+    alert("Nama supplier wajib diisi.");
+    return;
+  }
+
+  supplierList.push({
+    nama: nama,
+    kategori: kategori || "-",
+    kontak: kontak || "-"
+  });
+
+  document.getElementById("namaSupplierBaru").value = "";
+  document.getElementById("kategoriSupplierBaru").value = "";
+  document.getElementById("kontakSupplierBaru").value = "";
+
+  simpanSupplier();
+  tampilkanSupplier();
+  refreshSupplierDropdown();
+}
+
+function tampilkanSupplier() {
+  const container = document.getElementById("daftarSupplierView");
+  if (!container) return;
+
+  if (supplierList.length === 0) {
+    container.innerHTML = "<p>Belum ada supplier.</p>";
+    return;
+  }
+
+  let html = "<ul>";
+
+  supplierList.forEach(function(supplier, index) {
+    html += `
+      <li>
+        <strong>${supplier.nama}</strong> —
+        ${supplier.kategori} —
+        ${supplier.kontak}
+        <button class="hapus kecil" onclick="hapusSupplier(${index})">Hapus</button>
+      </li>
+    `;
+  });
+
+  html += "</ul>";
+  container.innerHTML = html;
+}
+
+function hapusSupplier(index) {
+  const yakin = confirm("Yakin mau hapus supplier ini?");
+  if (!yakin) return;
+
+  supplierList.splice(index, 1);
+  simpanSupplier();
+  tampilkanSupplier();
+  refreshSupplierDropdown();
+}
+
+function resetSupplier() {
+  const yakin = confirm("Yakin mau reset semua data supplier?");
+  if (!yakin) return;
+
+  localStorage.removeItem(SUPPLIER_KEY);
+  supplierList = [];
+  muatSupplier();
+  refreshSupplierDropdown();
+}
+
+function supplierOptions(selected) {
+  let html = `<option value="">Pilih Supplier</option>`;
+
+  supplierList.forEach(function(supplier) {
+    html += `
+      <option value="${supplier.nama}" ${supplier.nama === selected ? "selected" : ""}>
+        ${supplier.nama}
+      </option>
+    `;
+  });
+
+  return html;
+}
+
+function refreshSupplierDropdown() {
+  const semuaBaris = document.querySelectorAll("#daftarItem tr");
+
+  semuaBaris.forEach(function(baris) {
+    const supplierSelect = baris.querySelector(".supplierSelect");
+    if (!supplierSelect) return;
+
+    const selected = supplierSelect.value;
+    supplierSelect.innerHTML = supplierOptions(selected);
+  });
+
+  simpanData();
+}
 function formatRupiah(angka) {
   return "Rp " + Math.round(angka).toLocaleString("id-ID");
 }
