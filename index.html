@@ -62,6 +62,10 @@
       background: #b00020;
     }
 
+    .print {
+      background: #0a7c3b;
+    }
+
     .result {
       margin-top: 25px;
       background: #f0f0f0;
@@ -75,16 +79,78 @@
       font-weight: bold;
       color: #0a7c3b;
     }
+
+    .print-only {
+      display: none;
+    }
+
+    @media print {
+      body {
+        background: white;
+        padding: 0;
+      }
+
+      .container {
+        box-shadow: none;
+        max-width: 100%;
+        border-radius: 0;
+      }
+
+      button, .hapus, .no-print {
+        display: none !important;
+      }
+
+      .print-only {
+        display: block;
+      }
+
+      input, select, textarea {
+        border: none;
+        padding: 0;
+        font-size: 12px;
+        appearance: none;
+      }
+
+      textarea {
+        height: auto;
+      }
+
+      th {
+        background: #ddd !important;
+        color: #000 !important;
+      }
+
+      table {
+        font-size: 11px;
+      }
+
+      .result {
+        border: 1px solid #ddd;
+        background: white;
+      }
+    }
   </style>
 </head>
 
 <body>
   <div class="container">
+    <div class="print-only">
+      <h2>Estimasi Produksi</h2>
+      <p>Dokumen ini dicetak dari Sistem Estimasi Produksi.</p>
+      <hr>
+    </div>
+
     <h1>Sistem Estimasi Produksi</h1>
-    <p>Versi 5: Kategori, satuan, supplier, catatan teknis, HPP, margin, dan harga jual.</p>
+    <p>Versi 6: Tambah fitur print / export PDF sederhana.</p>
 
     <label>Nama Project:</label>
     <input id="namaProject" type="text" placeholder="Contoh: Booth GIIAS 2026">
+
+    <label>Nama Client:</label>
+    <input id="namaClient" type="text" placeholder="Contoh: PT ABC Indonesia">
+
+    <label>Tanggal Estimasi:</label>
+    <input id="tanggalEstimasi" type="date">
 
     <table>
       <thead>
@@ -101,7 +167,7 @@
           <th>Total Jual</th>
           <th>Profit</th>
           <th>Catatan</th>
-          <th>Aksi</th>
+          <th class="no-print">Aksi</th>
         </tr>
       </thead>
 
@@ -138,12 +204,13 @@
           <td class="totalJual">Rp 0</td>
           <td class="profitItem">Rp 0</td>
           <td><textarea placeholder="Catatan teknis"></textarea></td>
-          <td><button class="hapus" onclick="hapusItem(this)">Hapus</button></td>
+          <td class="no-print"><button class="hapus" onclick="hapusItem(this)">Hapus</button></td>
         </tr>
       </tbody>
     </table>
 
     <button onclick="tambahItem()">+ Tambah Item</button>
+    <button class="print" onclick="window.print()">Print / Export PDF</button>
 
     <div class="result">
       <p>Total HPP / Modal: <strong id="grandHpp">Rp 0</strong></p>
@@ -199,7 +266,7 @@
         <td class="totalJual">Rp 0</td>
         <td class="profitItem">Rp 0</td>
         <td><textarea placeholder="Catatan teknis"></textarea></td>
-        <td><button class="hapus" onclick="hapusItem(this)">Hapus</button></td>
+        <td class="no-print"><button class="hapus" onclick="hapusItem(this)">Hapus</button></td>
       `;
 
       daftarItem.appendChild(barisBaru);
