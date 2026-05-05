@@ -140,3 +140,23 @@ button {
   margin-top: 0;
   margin-bottom: 5px;
 }
+.supplier-box {
+  margin-top: 20px;
+  padding: 15px;
+  background: #fafafa;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+}
+
+.supplier-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr auto auto;
+  gap: 8px;
+  align-items: start;
+}
+
+.kecil {
+  padding: 5px 8px;
+  font-size: 11px;
+  margin-left: 8px;
+}
