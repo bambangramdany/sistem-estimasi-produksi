@@ -304,10 +304,10 @@ function ambilDataDariTabel() {
       kategori: selects[0].value,
       item: inputs[0].value,
       satuan: selects[1].value,
-      supplier: inputs[1].value,
-      qty: Number(inputs[2].value) || 0,
-      hppSatuan: Number(inputs[3].value) || 0,
-      marginPersen: Number(inputs[4].value) || 0,
+      supplier: selects[2].value,
+qty: Number(inputs[1].value) || 0,
+hppSatuan: Number(inputs[2].value) || 0,
+marginPersen: Number(inputs[3].value) || 0,
       catatan: textarea.value
     });
   });
@@ -379,9 +379,9 @@ function hitungEstimasi() {
     const kategori = baris.querySelector("select").value;
     const inputs = baris.querySelectorAll("input");
 
-    const qty = Number(inputs[2].value) || 0;
-    const hppSatuan = Number(inputs[3].value) || 0;
-    const marginPersen = Number(inputs[4].value) || 0;
+    const qty = Number(inputs[1].value) || 0;
+const hppSatuan = Number(inputs[2].value) || 0;
+const marginPersen = Number(inputs[3].value) || 0;
 
     const hargaJualSatuan = hppSatuan + (hppSatuan * marginPersen / 100);
     const totalHpp = qty * hppSatuan;
@@ -431,4 +431,5 @@ function tampilkanRingkasanKategori(data) {
   }
 }
 
+muatSupplier();
 muatData();
