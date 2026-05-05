@@ -165,3 +165,19 @@ button {
   color: #0a7c3b;
   min-width: 140px;
 }
+.history-box {
+  margin-top: 20px;
+  padding: 15px;
+  background: #fafafa;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+}
+
+.history-table {
+  margin-top: 15px;
+  font-size: 12px;
+}
+
+.history-table th {
+  background: #444;
+}
