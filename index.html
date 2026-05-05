@@ -24,7 +24,19 @@
 
     <label>Tanggal Estimasi:</label>
     <input id="tanggalEstimasi" type="date" oninput="simpanData()">
+<div class="supplier-box no-print">
+  <h3>Supplier Database</h3>
 
+  <div class="supplier-form">
+    <input id="namaSupplierBaru" type="text" placeholder="Nama Supplier / Vendor">
+    <input id="kategoriSupplierBaru" type="text" placeholder="Kategori Supplier">
+    <input id="kontakSupplierBaru" type="text" placeholder="Nomor WhatsApp / Kontak">
+    <button onclick="tambahSupplier()">+ Tambah Supplier</button>
+    <button class="reset" onclick="resetSupplier()">Reset Supplier</button>
+  </div>
+
+  <div id="daftarSupplierView"></div>
+</div>
     <table>
       <thead>
         <tr>
