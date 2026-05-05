@@ -160,3 +160,8 @@ button {
   font-size: 11px;
   margin-left: 8px;
 }
+.rekomendasiSupplier {
+  font-weight: bold;
+  color: #0a7c3b;
+  min-width: 140px;
+}
