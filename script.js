@@ -154,31 +154,61 @@ function satuanOptions(selected) {
 function buatBaris(data = {}) {
   const baris = document.createElement("tr");
 
+  function buatBaris(data = {}) {
+  const baris = document.createElement("tr");
+
   baris.innerHTML = `
     <td>
       <select onchange="hitungEstimasi(); simpanData();">
         ${kategoriOptions(data.kategori || "Konstruksi")}
       </select>
     </td>
+
     <td><input type="text" value="${data.item || ""}" placeholder="Nama item" oninput="simpanData()"></td>
+
     <td>
       <select onchange="simpanData()">
         ${satuanOptions(data.satuan || "paket")}
       </select>
     </td>
+
     <td>
-  <select class="supplierSelect" onchange="simpanData()">
-    ${supplierOptions(data.supplier || "")}
-  </select>
-</td>
-    <td><input type="number" value="${data.qty || 1}" oninput="hitungEstimasi(); simpanData();"></td>
+      <select class="supplierSelect" onchange="hitungEstimasi(); simpanData();">
+        ${supplierOptions(data.supplier || "")}
+      </select>
+    </td>
+
     <td><input type="number" value="${data.hppSatuan || 0}" oninput="hitungEstimasi(); simpanData();"></td>
+
+    <td>
+      <select class="supplierSelect" onchange="hitungEstimasi(); simpanData();">
+        ${supplierOptions(data.supplierPembanding1 || "")}
+      </select>
+    </td>
+
+    <td><input type="number" value="${data.hargaPembanding1 || 0}" oninput="hitungEstimasi(); simpanData();"></td>
+
+    <td>
+      <select class="supplierSelect" onchange="hitungEstimasi(); simpanData();">
+        ${supplierOptions(data.supplierPembanding2 || "")}
+      </select>
+    </td>
+
+    <td><input type="number" value="${data.hargaPembanding2 || 0}" oninput="hitungEstimasi(); simpanData();"></td>
+
+    <td class="rekomendasiSupplier">-</td>
+
+    <td><input type="number" value="${data.qty || 1}" oninput="hitungEstimasi(); simpanData();"></td>
+
     <td><input type="number" value="${data.marginPersen || 20}" oninput="hitungEstimasi(); simpanData();"></td>
+
     <td class="hargaJualSatuan">Rp 0</td>
     <td class="totalHpp">Rp 0</td>
     <td class="totalJual">Rp 0</td>
     <td class="profitItem">Rp 0</td>
+
     <td><textarea placeholder="Catatan teknis" oninput="simpanData()">${data.catatan || ""}</textarea></td>
+
     <td class="no-print"><button class="hapus" onclick="hapusItem(this)">Hapus</button></td>
   `;
 
@@ -280,8 +310,96 @@ function tambahItem() {
     marginPersen: 20,
     catatan: ""
   });
+function cariRekomendasiSupplier(dataHarga) {
+  const pilihanValid = dataHarga.filter(item => item.harga > 0 && item.supplier !== "");
 
-  hitungEstimasi();
+  if (pilihanValid.length === 0) {
+    return {
+      supplier: "-",
+      harga: 0
+    };
+  }
+
+  pilihanValid.sort((a, b) => a.harga - b.harga);
+
+  return pilihanValid[0];
+}
+ function hitungEstimasi() {
+  const semuaBaris = document.querySelectorAll("#daftarItem tr");
+
+  let grandHpp = 0;
+  let grandJual = 0;
+  let grandProfit = 0;
+  let kategoriSummary = {};
+
+  semuaBaris.forEach(function(baris) {
+    const selects = baris.querySelectorAll("select");
+    const inputs = baris.querySelectorAll("input");
+
+    const kategori = selects[0].value;
+
+    const supplierUtama = selects[2].value;
+    const hargaUtama = Number(inputs[1].value) || 0;
+
+    const supplierPembanding1 = selects[3].value;
+    const hargaPembanding1 = Number(inputs[2].value) || 0;
+
+    const supplierPembanding2 = selects[4].value;
+    const hargaPembanding2 = Number(inputs[3].value) || 0;
+
+    const qty = Number(inputs[4].value) || 0;
+    const marginPersen = Number(inputs[5].value) || 0;
+
+    const rekomendasi = cariRekomendasiSupplier([
+      {
+        supplier: supplierUtama,
+        harga: hargaUtama
+      },
+      {
+        supplier: supplierPembanding1,
+        harga: hargaPembanding1
+      },
+      {
+        supplier: supplierPembanding2,
+        harga: hargaPembanding2
+      }
+    ]);
+
+    const hppSatuan = rekomendasi.harga;
+    const hargaJualSatuan = hppSatuan + (hppSatuan * marginPersen / 100);
+    const totalHpp = qty * hppSatuan;
+    const totalJual = qty * hargaJualSatuan;
+    const profitItem = totalJual - totalHpp;
+
+    baris.querySelector(".rekomendasiSupplier").innerText =
+      rekomendasi.supplier === "-"
+        ? "-"
+        : rekomendasi.supplier + " / " + formatRupiah(rekomendasi.harga);
+
+    baris.querySelector(".hargaJualSatuan").innerText = formatRupiah(hargaJualSatuan);
+    baris.querySelector(".totalHpp").innerText = formatRupiah(totalHpp);
+    baris.querySelector(".totalJual").innerText = formatRupiah(totalJual);
+    baris.querySelector(".profitItem").innerText = formatRupiah(profitItem);
+
+    grandHpp += totalHpp;
+    grandJual += totalJual;
+    grandProfit += profitItem;
+
+    if (!kategoriSummary[kategori]) {
+      kategoriSummary[kategori] = { hpp: 0, jual: 0, profit: 0 };
+    }
+
+    kategoriSummary[kategori].hpp += totalHpp;
+    kategoriSummary[kategori].jual += totalJual;
+    kategoriSummary[kategori].profit += profitItem;
+  });
+
+  document.getElementById("grandHpp").innerText = formatRupiah(grandHpp);
+  document.getElementById("grandProfit").innerText = formatRupiah(grandProfit);
+  document.getElementById("grandJual").innerText = formatRupiah(grandJual);
+
+  tampilkanRingkasanKategori(kategoriSummary);
+}
   simpanData();
 }
 
@@ -304,10 +422,18 @@ function ambilDataDariTabel() {
       kategori: selects[0].value,
       item: inputs[0].value,
       satuan: selects[1].value,
+
       supplier: selects[2].value,
-qty: Number(inputs[1].value) || 0,
-hppSatuan: Number(inputs[2].value) || 0,
-marginPersen: Number(inputs[3].value) || 0,
+      hppSatuan: Number(inputs[1].value) || 0,
+
+      supplierPembanding1: selects[3].value,
+      hargaPembanding1: Number(inputs[2].value) || 0,
+
+      supplierPembanding2: selects[4].value,
+      hargaPembanding2: Number(inputs[3].value) || 0,
+
+      qty: Number(inputs[4].value) || 0,
+      marginPersen: Number(inputs[5].value) || 0,
       catatan: textarea.value
     });
   });
