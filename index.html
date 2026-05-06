@@ -1,106 +1,103 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
+  <meta charset="UTF-8">
   <title>Sistem Estimasi Produksi</title>
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
   <div class="container">
-    <div class="print-only">
-      <h2>Estimasi Produksi</h2>
-      <p>Dokumen ini dicetak dari Sistem Estimasi Produksi.</p>
-      <hr>
+    <h1>Sistem Estimasi Produksi</h1>
+    <p>Versi 13.5 — Repair & Stabilize</p>
+
+    <div class="project-info">
+      <label>Nama Project</label>
+      <input id="namaProject" type="text" placeholder="Contoh: Booth GIIAS 2026">
+
+      <label>Nama Client</label>
+      <input id="namaClient" type="text" placeholder="Contoh: PT ABC Indonesia">
+
+      <label>Tanggal Estimasi</label>
+      <input id="tanggalEstimasi" type="date">
     </div>
 
-    <h1>Sistem Estimasi Produksi</h1>
-    <p>Versi 8: Struktur file sudah dipisah agar lebih rapi.</p>
+    <div class="box">
+      <h3>Supplier Database</h3>
+      <div class="form-grid">
+        <input id="namaSupplierBaru" type="text" placeholder="Nama Supplier">
+        <input id="kategoriSupplierBaru" type="text" placeholder="Kategori">
+        <input id="kontakSupplierBaru" type="text" placeholder="Kontak">
+        <button onclick="tambahSupplier()">+ Supplier</button>
+        <button class="reset" onclick="resetSupplier()">Reset</button>
+      </div>
+      <div id="daftarSupplierView"></div>
+    </div>
 
-    <label>Nama Project:</label>
-    <input id="namaProject" type="text" placeholder="Contoh: Booth GIIAS 2026" oninput="simpanData()">
+    <div class="box">
+      <h3>Histori Harga</h3>
+      <button onclick="simpanHistoriHarga()">Simpan Harga ke Histori</button>
+      <button class="reset" onclick="resetHistoriHarga()">Reset Histori</button>
+      <div id="historiHargaView"></div>
+    </div>
 
-    <label>Nama Client:</label>
-    <input id="namaClient" type="text" placeholder="Contoh: PT ABC Indonesia" oninput="simpanData()">
+    <div class="box">
+      <h3>Inventory / Sisa Material</h3>
+      <div class="form-grid">
+        <input id="namaMaterialBaru" type="text" placeholder="Nama Material">
+        <input id="kategoriMaterialBaru" type="text" placeholder="Kategori">
+        <input id="qtyMaterialBaru" type="number" placeholder="Qty">
+        <input id="satuanMaterialBaru" type="text" placeholder="Satuan">
+        <input id="lokasiMaterialBaru" type="text" placeholder="Lokasi">
+        <button onclick="tambahInventory()">+ Material</button>
+        <button class="reset" onclick="resetInventory()">Reset</button>
+      </div>
+      <div id="inventoryView"></div>
+    </div>
 
-    <label>Tanggal Estimasi:</label>
-    <input id="tanggalEstimasi" type="date" oninput="simpanData()">
-<div class="supplier-box no-print">
-  <h3>Supplier Database</h3>
-<div class="history-box no-print">
-  <h3>Histori Harga</h3>
-  <button onclick="simpanHistoriHarga()">Simpan Harga ke Histori</button>
-  <button class="reset" onclick="resetHistoriHarga()">Reset Histori</button>
+    <div class="box">
+      <h3>Template Item Produksi</h3>
+      <button onclick="tambahTemplate('booth')">+ Booth</button>
+      <button onclick="tambahTemplate('backdrop')">+ Backdrop</button>
+      <button onclick="tambahTemplate('led')">+ LED</button>
+      <button onclick="tambahTemplate('sound')">+ Sound</button>
+      <button onclick="tambahTemplate('lighting')">+ Lighting</button>
+      <button onclick="tambahTemplate('crew')">+ Crew</button>
+      <button onclick="tambahTemplate('transport')">+ Transport</button>
+    </div>
 
-  <div id="historiHargaView"></div>
-</div>
-  <div class="supplier-form">
-    <input id="namaSupplierBaru" type="text" placeholder="Nama Supplier / Vendor">
-    <input id="kategoriSupplierBaru" type="text" placeholder="Kategori Supplier">
-    <input id="kontakSupplierBaru" type="text" placeholder="Nomor WhatsApp / Kontak">
-    <button onclick="tambahSupplier()">+ Tambah Supplier</button>
-    <button class="reset" onclick="resetSupplier()">Reset Supplier</button>
-  </div>
-
-  <div id="daftarSupplierView"></div>
-</div>
     <table>
       <thead>
         <tr>
-  <th>Kategori</th>
-  <th>Item</th>
-  <th>Satuan</th>
-  <th>Supplier Utama</th>
-  <th>Harga Utama</th>
-  <th>Pembanding 1</th>
-  <th>Harga 1</th>
-  <th>Pembanding 2</th>
-  <th>Harga 2</th>
-  <th>Rekomendasi</th>
-  <th>Qty</th>
-  <th>Margin %</th>
-  <th>Harga Jual Satuan</th>
-  <th>Total HPP</th>
-  <th>Total Jual</th>
-  <th>Profit</th>
-  <th>Catatan</th>
-  <th class="no-print">Aksi</th>
-</tr>
+          <th>Kategori</th>
+          <th>Item</th>
+          <th>Satuan</th>
+          <th>Supplier Utama</th>
+          <th>Harga Utama</th>
+          <th>Supplier 1</th>
+          <th>Harga 1</th>
+          <th>Supplier 2</th>
+          <th>Harga 2</th>
+          <th>Rekomendasi</th>
+          <th>Qty</th>
+          <th>Margin %</th>
+          <th>Harga Jual</th>
+          <th>Total HPP</th>
+          <th>Total Jual</th>
+          <th>Profit</th>
+          <th>Catatan</th>
+          <th>Aksi</th>
+        </tr>
       </thead>
-<div class="inventory-box no-print">
-  <h3>Inventory / Sisa Material</h3>
-
-  <div class="inventory-form">
-    <input id="namaMaterialBaru" type="text" placeholder="Nama Material">
-    <input id="kategoriMaterialBaru" type="text" placeholder="Kategori">
-    <input id="qtyMaterialBaru" type="number" placeholder="Qty">
-    <input id="satuanMaterialBaru" type="text" placeholder="Satuan">
-    <input id="lokasiMaterialBaru" type="text" placeholder="Lokasi Penyimpanan">
-    <button onclick="tambahInventory()">+ Tambah Material</button>
-    <button class="reset" onclick="resetInventory()">Reset Inventory</button>
-  </div>
-
-  <div id="inventoryView"></div>
-</div>
       <tbody id="daftarItem"></tbody>
     </table>
 
-    <div class="template-buttons no-print">
-  <h3>Template Item Produksi</h3>
-  <button onclick="tambahTemplate('booth')">+ Booth</button>
-  <button onclick="tambahTemplate('backdrop')">+ Backdrop</button>
-  <button onclick="tambahTemplate('led')">+ LED</button>
-  <button onclick="tambahTemplate('sound')">+ Sound</button>
-  <button onclick="tambahTemplate('lighting')">+ Lighting</button>
-  <button onclick="tambahTemplate('crew')">+ Crew</button>
-  <button onclick="tambahTemplate('transport')">+ Transport</button>
-</div>
-
-<button onclick="tambahItem()">+ Tambah Item Kosong</button>
-<button class="print" onclick="window.print()">Print / Export PDF</button>
-<button class="reset" onclick="resetData()">Reset Data</button>
+    <button onclick="tambahItem()">+ Tambah Item Kosong</button>
+    <button class="print" onclick="window.print()">Print / Export PDF</button>
+    <button class="reset" onclick="resetData()">Reset Estimasi</button>
 
     <div class="result">
-      <p>Total HPP / Modal: <strong id="grandHpp">Rp 0</strong></p>
+      <p>Total HPP: <strong id="grandHpp">Rp 0</strong></p>
       <p>Total Profit: <strong id="grandProfit">Rp 0</strong></p>
       <p>Total Penawaran:</p>
       <p class="highlight" id="grandJual">Rp 0</p>
