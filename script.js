@@ -313,6 +313,13 @@ function hitungEstimasi() {
   document.getElementById("grandHpp").innerText = formatRupiah(grandHpp);
   document.getElementById("grandProfit").innerText = formatRupiah(grandProfit);
   document.getElementById("grandJual").innerText = formatRupiah(grandJual);
+  
+  const marginProject = grandJual > 0 ? (grandProfit / grandJual) * 100 : 0;
+
+  document.getElementById("dashboardHpp").innerText = formatRupiah(grandHpp);
+  document.getElementById("dashboardJual").innerText = formatRupiah(grandJual);
+  document.getElementById("dashboardProfit").innerText = formatRupiah(grandProfit);
+  document.getElementById("dashboardMargin").innerText = marginProject.toFixed(1) + "%";
 
   tampilkanRingkasanKategori(kategoriSummary);
 }
