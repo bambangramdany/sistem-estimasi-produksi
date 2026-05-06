@@ -1,3 +1,117 @@
+function muatInventory() {
+  const dataInventory = localStorage.getItem(INVENTORY_KEY);
+
+  if (dataInventory) {
+    inventoryList = JSON.parse(dataInventory);
+  } else {
+    inventoryList = [];
+  }
+
+  tampilkanInventory();
+}
+
+function simpanInventory() {
+  localStorage.setItem(INVENTORY_KEY, JSON.stringify(inventoryList));
+}
+
+function tambahInventory() {
+  const nama = document.getElementById("namaMaterialBaru").value.trim();
+  const kategori = document.getElementById("kategoriMaterialBaru").value.trim();
+  const qty = Number(document.getElementById("qtyMaterialBaru").value) || 0;
+  const satuan = document.getElementById("satuanMaterialBaru").value.trim();
+  const lokasi = document.getElementById("lokasiMaterialBaru").value.trim();
+
+  if (!nama) {
+    alert("Nama material wajib diisi.");
+    return;
+  }
+
+  inventoryList.push({
+    nama: nama,
+    kategori: kategori || "-",
+    qty: qty,
+    satuan: satuan || "-",
+    lokasi: lokasi || "-",
+    tanggalMasuk: new Date().toISOString().slice(0, 10)
+  });
+
+  document.getElementById("namaMaterialBaru").value = "";
+  document.getElementById("kategoriMaterialBaru").value = "";
+  document.getElementById("qtyMaterialBaru").value = "";
+  document.getElementById("satuanMaterialBaru").value = "";
+  document.getElementById("lokasiMaterialBaru").value = "";
+
+  simpanInventory();
+  tampilkanInventory();
+}
+
+function tampilkanInventory() {
+  const container = document.getElementById("inventoryView");
+  if (!container) return;
+
+  if (inventoryList.length === 0) {
+    container.innerHTML = "<p>Belum ada data inventory.</p>";
+    return;
+  }
+
+  let html = `
+    <table class="inventory-table">
+      <thead>
+        <tr>
+          <th>Tanggal Masuk</th>
+          <th>Material</th>
+          <th>Kategori</th>
+          <th>Qty</th>
+          <th>Satuan</th>
+          <th>Lokasi</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+
+  inventoryList.forEach(function(item, index) {
+    html += `
+      <tr>
+        <td>${item.tanggalMasuk}</td>
+        <td>${item.nama}</td>
+        <td>${item.kategori}</td>
+        <td>${item.qty}</td>
+        <td>${item.satuan}</td>
+        <td>${item.lokasi}</td>
+        <td>
+          <button class="hapus kecil" onclick="hapusInventory(${index})">Hapus</button>
+        </td>
+      </tr>
+    `;
+  });
+
+  html += `
+      </tbody>
+    </table>
+  `;
+
+  container.innerHTML = html;
+}
+
+function hapusInventory(index) {
+  const yakin = confirm("Yakin mau hapus material ini?");
+  if (!yakin) return;
+
+  inventoryList.splice(index, 1);
+  simpanInventory();
+  tampilkanInventory();
+}
+
+function resetInventory() {
+  const yakin = confirm("Yakin mau reset semua inventory?");
+  if (!yakin) return;
+
+  localStorage.removeItem(INVENTORY_KEY);
+  inventoryList = [];
+  tampilkanInventory();
+}
+
 const STORAGE_KEY = "dataEstimasiProduksi";
 function muatSupplier() {
   const dataSupplier = localStorage.getItem(SUPPLIER_KEY);
