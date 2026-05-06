@@ -796,4 +796,5 @@ function resetHistoriHarga() {
   
 muatSupplier();
 muatHistoriHarga();
+muatInventory();
 muatData();
