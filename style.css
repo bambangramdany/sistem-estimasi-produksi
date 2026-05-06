@@ -8,9 +8,13 @@ body {
   background: white;
   padding: 25px;
   border-radius: 12px;
-  max-width: 1400px;
+  max-width: 1500px;
   margin: auto;
   box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+h1 {
+  margin-bottom: 5px;
 }
 
 input, select, textarea {
@@ -24,16 +28,38 @@ textarea {
   resize: vertical;
 }
 
+.project-info {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.box {
+  margin-top: 20px;
+  padding: 15px;
+  background: #fafafa;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr) auto auto;
+  gap: 8px;
+  align-items: start;
+}
+
 table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 20px;
-  font-size: 13px;
+  font-size: 12px;
 }
 
 th, td {
   border: 1px solid #ddd;
-  padding: 7px;
+  padding: 6px;
   vertical-align: top;
 }
 
@@ -43,26 +69,35 @@ th {
 }
 
 button {
-  margin-top: 15px;
-  margin-right: 8px;
-  padding: 10px 16px;
+  margin-top: 10px;
+  margin-right: 6px;
+  padding: 9px 14px;
   background: #222;
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 7px;
   cursor: pointer;
+}
+
+button:hover {
+  background: #444;
 }
 
 .hapus {
   background: #b00020;
 }
 
+.reset {
+  background: #9c6500;
+}
+
 .print {
   background: #0a7c3b;
 }
 
-.reset {
-  background: #9c6500;
+.kecil {
+  padding: 5px 8px;
+  font-size: 11px;
 }
 
 .result {
@@ -79,11 +114,17 @@ button {
   color: #0a7c3b;
 }
 
-.print-only {
-  display: none;
+.rekomendasiSupplier {
+  font-weight: bold;
+  color: #0a7c3b;
+  min-width: 140px;
 }
 
 @media print {
+  button, .box, th:last-child, td:last-child {
+    display: none !important;
+  }
+
   body {
     background: white;
     padding: 0;
@@ -92,116 +133,10 @@ button {
   .container {
     box-shadow: none;
     max-width: 100%;
-    border-radius: 0;
-  }
-
-  button, .hapus, .no-print {
-    display: none !important;
-  }
-
-  .print-only {
-    display: block;
   }
 
   input, select, textarea {
     border: none;
     padding: 0;
-    font-size: 12px;
-    appearance: none;
   }
-
-  textarea {
-    height: auto;
-  }
-
-  th {
-    background: #ddd !important;
-    color: #000 !important;
-  }
-
-  table {
-    font-size: 11px;
-  }
-
-  .result {
-    border: 1px solid #ddd;
-    background: white;
-  }
-}
-.template-buttons {
-  margin-top: 20px;
-  padding: 15px;
-  background: #fafafa;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-}
-
-.template-buttons h3 {
-  margin-top: 0;
-  margin-bottom: 5px;
-}
-.supplier-box {
-  margin-top: 20px;
-  padding: 15px;
-  background: #fafafa;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-}
-
-.supplier-form {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr auto auto;
-  gap: 8px;
-  align-items: start;
-}
-
-.kecil {
-  padding: 5px 8px;
-  font-size: 11px;
-  margin-left: 8px;
-}
-.rekomendasiSupplier {
-  font-weight: bold;
-  color: #0a7c3b;
-  min-width: 140px;
-}
-.history-box {
-  margin-top: 20px;
-  padding: 15px;
-  background: #fafafa;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-}
-
-.history-table {
-  margin-top: 15px;
-  font-size: 12px;
-}
-
-.history-table th {
-  background: #444;
-}
-
-.inventory-box {
-  margin-top: 20px;
-  padding: 15px;
-  background: #fafafa;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-}
-
-.inventory-form {
-  display: grid;
-  grid-template-columns: 1.5fr 1fr 0.7fr 0.7fr 1.3fr auto auto;
-  gap: 8px;
-  align-items: start;
-}
-
-.inventory-table {
-  margin-top: 15px;
-  font-size: 12px;
-}
-
-.inventory-table th {
-  background: #555;
 }
