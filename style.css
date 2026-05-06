@@ -140,3 +140,78 @@ button:hover {
     padding: 0;
   }
 }
+
+.dashboard {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.card {
+  background: #111;
+  color: white;
+  padding: 18px;
+  border-radius: 12px;
+}
+
+.card span {
+  display: block;
+  font-size: 13px;
+  color: #ccc;
+  margin-bottom: 8px;
+}
+
+.card strong {
+  font-size: 22px;
+}
+
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  margin-top: 20px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+}
+
+.table-wrapper table {
+  min-width: 1900px;
+  margin-top: 0;
+}
+
+th {
+  white-space: nowrap;
+}
+
+td input,
+td select,
+td textarea {
+  min-width: 90px;
+}
+
+td:nth-child(2) input {
+  min-width: 180px;
+}
+
+td:nth-child(10) {
+  min-width: 190px;
+}
+
+td:nth-child(17) textarea {
+  min-width: 180px;
+}
+
+.result {
+  display: none;
+}
+
+@media screen and (max-width: 900px) {
+  .dashboard {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
