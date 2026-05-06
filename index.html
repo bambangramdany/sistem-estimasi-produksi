@@ -65,7 +65,30 @@
       <button onclick="tambahTemplate('crew')">+ Crew</button>
       <button onclick="tambahTemplate('transport')">+ Transport</button>
     </div>
+<div class="dashboard">
+  <div class="card">
+    <span>Total HPP</span>
+    <strong id="dashboardHpp">Rp 0</strong>
+  </div>
 
+  <div class="card">
+    <span>Total Jual</span>
+    <strong id="dashboardJual">Rp 0</strong>
+  </div>
+
+  <div class="card">
+    <span>Total Profit</span>
+    <strong id="dashboardProfit">Rp 0</strong>
+  </div>
+
+  <div class="card">
+    <span>Margin Project</span>
+    <strong id="dashboardMargin">0%</strong>
+  </div>
+</div>
+
+<div class="table-wrapper">
+    
     <table>
       <thead>
         <tr>
@@ -91,7 +114,8 @@
       </thead>
       <tbody id="daftarItem"></tbody>
     </table>
-
+    </div>
+    
     <button onclick="tambahItem()">+ Tambah Item Kosong</button>
     <button class="print" onclick="window.print()">Print / Export PDF</button>
     <button class="reset" onclick="resetData()">Reset Estimasi</button>
