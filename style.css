@@ -181,3 +181,27 @@ button {
 .history-table th {
   background: #444;
 }
+
+.inventory-box {
+  margin-top: 20px;
+  padding: 15px;
+  background: #fafafa;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+}
+
+.inventory-form {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 0.7fr 0.7fr 1.3fr auto auto;
+  gap: 8px;
+  align-items: start;
+}
+
+.inventory-table {
+  margin-top: 15px;
+  font-size: 12px;
+}
+
+.inventory-table th {
+  background: #555;
+}
