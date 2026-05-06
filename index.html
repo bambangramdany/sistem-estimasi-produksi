@@ -66,7 +66,21 @@
   <th class="no-print">Aksi</th>
 </tr>
       </thead>
+<div class="inventory-box no-print">
+  <h3>Inventory / Sisa Material</h3>
 
+  <div class="inventory-form">
+    <input id="namaMaterialBaru" type="text" placeholder="Nama Material">
+    <input id="kategoriMaterialBaru" type="text" placeholder="Kategori">
+    <input id="qtyMaterialBaru" type="number" placeholder="Qty">
+    <input id="satuanMaterialBaru" type="text" placeholder="Satuan">
+    <input id="lokasiMaterialBaru" type="text" placeholder="Lokasi Penyimpanan">
+    <button onclick="tambahInventory()">+ Tambah Material</button>
+    <button class="reset" onclick="resetInventory()">Reset Inventory</button>
+  </div>
+
+  <div id="inventoryView"></div>
+</div>
       <tbody id="daftarItem"></tbody>
     </table>
 
