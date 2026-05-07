@@ -88,7 +88,53 @@
 </div>
 
 <div class="table-wrapper">
-    
+<div class="box">
+  <h3>Input Item Produksi</h3>
+
+  <div class="item-form-grid">
+    <select id="formKategori">
+      <option>Konstruksi</option>
+      <option>Multimedia</option>
+      <option>Sound</option>
+      <option>Lighting</option>
+      <option>Manpower</option>
+      <option>Transport</option>
+      <option>Creative</option>
+      <option>Production House</option>
+      <option>Lain-lain</option>
+    </select>
+
+    <input id="formItem" type="text" placeholder="Nama item">
+
+    <select id="formSatuan">
+      <option>paket</option>
+      <option>unit</option>
+      <option>m²</option>
+      <option>meter</option>
+      <option>hari</option>
+      <option>orang</option>
+      <option>lembar</option>
+    </select>
+
+    <select id="formSupplierUtama"></select>
+    <input id="formHargaUtama" type="number" placeholder="Harga utama">
+
+    <select id="formSupplier1"></select>
+    <input id="formHarga1" type="number" placeholder="Harga pembanding 1">
+
+    <select id="formSupplier2"></select>
+    <input id="formHarga2" type="number" placeholder="Harga pembanding 2">
+
+    <input id="formQty" type="number" placeholder="Qty" value="1">
+    <input id="formMargin" type="number" placeholder="Margin %" value="20">
+  </div>
+
+  <textarea id="formCatatan" placeholder="Catatan teknis"></textarea>
+
+  <button onclick="tambahItemDariForm()">+ Tambah ke Estimasi</button>
+  <button class="reset" onclick="resetFormItem()">Reset Form</button>
+</div>
+  
     <table>
       <thead>
         <tr>
