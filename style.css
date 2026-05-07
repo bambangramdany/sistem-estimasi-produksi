@@ -215,3 +215,21 @@ td:nth-child(17) textarea {
     grid-template-columns: 1fr;
   }
 }
+
+.item-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr 0.8fr 1fr 1fr 1fr 1fr 1fr 1fr 0.7fr 0.7fr;
+  gap: 8px;
+  align-items: start;
+}
+
+#formCatatan {
+  margin-top: 10px;
+  min-height: 70px;
+}
+
+@media screen and (max-width: 1200px) {
+  .item-form-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
