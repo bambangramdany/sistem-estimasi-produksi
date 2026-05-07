@@ -133,35 +133,38 @@ function supplierOptions(selected) {
 function buatBaris(data = {}) {
   const baris = document.createElement("tr");
 
+  baris.dataset.kategori = data.kategori || "Konstruksi";
+  baris.dataset.item = data.item || "";
+  baris.dataset.satuan = data.satuan || "paket";
+
+  baris.dataset.supplier = data.supplier || "";
+  baris.dataset.hppSatuan = data.hppSatuan || 0;
+
+  baris.dataset.supplierPembanding1 = data.supplierPembanding1 || "";
+  baris.dataset.hargaPembanding1 = data.hargaPembanding1 || 0;
+
+  baris.dataset.supplierPembanding2 = data.supplierPembanding2 || "";
+  baris.dataset.hargaPembanding2 = data.hargaPembanding2 || 0;
+
+  baris.dataset.qty = data.qty || 1;
+  baris.dataset.marginPersen = data.marginPersen || 20;
+  baris.dataset.catatan = data.catatan || "";
+
   baris.innerHTML = `
-    <td><select onchange="hitungEstimasi(); simpanData();">${kategoriOptions(data.kategori || "Konstruksi")}</select></td>
-    <td><input type="text" value="${data.item || ""}" placeholder="Nama item" oninput="simpanData()"></td>
-    <td><select onchange="simpanData()">${satuanOptions(data.satuan || "paket")}</select></td>
-
-    <td><select class="supplierSelect" onchange="hitungEstimasi(); simpanData();">${supplierOptions(data.supplier || "")}</select></td>
-    <td><input type="number" value="${data.hppSatuan || 0}" oninput="hitungEstimasi(); simpanData();"></td>
-
-    <td><select class="supplierSelect" onchange="hitungEstimasi(); simpanData();">${supplierOptions(data.supplierPembanding1 || "")}</select></td>
-    <td><input type="number" value="${data.hargaPembanding1 || 0}" oninput="hitungEstimasi(); simpanData();"></td>
-
-    <td><select class="supplierSelect" onchange="hitungEstimasi(); simpanData();">${supplierOptions(data.supplierPembanding2 || "")}</select></td>
-    <td><input type="number" value="${data.hargaPembanding2 || 0}" oninput="hitungEstimasi(); simpanData();"></td>
-
-    <td class="rekomendasiSupplier">-</td>
-
-    <td><input type="number" value="${data.qty || 1}" oninput="hitungEstimasi(); simpanData();"></td>
-    <td><input type="number" value="${data.marginPersen || 20}" oninput="hitungEstimasi(); simpanData();"></td>
-
-    <td class="hargaJualSatuan">Rp 0</td>
-    <td class="totalHpp">Rp 0</td>
-    <td class="totalJual">Rp 0</td>
-    <td class="profitItem">Rp 0</td>
-
-    <td><textarea oninput="simpanData()">${data.catatan || ""}</textarea></td>
+    <td class="viewKategori"></td>
+    <td class="viewItem"></td>
+    <td class="viewSatuan"></td>
+    <td class="rekomendasiSupplier"></td>
+    <td class="viewQty"></td>
+    <td class="viewMargin"></td>
+    <td class="totalHpp"></td>
+    <td class="totalJual"></td>
+    <td class="profitItem"></td>
+    <td class="viewCatatan"></td>
     <td>
-  <button class="print kecil" onclick="editItem(this)">Edit</button>
-  <button class="hapus kecil" onclick="hapusItem(this)">Hapus</button>
-</td>
+      <button class="print kecil" onclick="editItem(this)">Edit</button>
+      <button class="hapus kecil" onclick="hapusItem(this)">Hapus</button>
+    </td>
   `;
 
   document.getElementById("daftarItem").appendChild(baris);
@@ -191,23 +194,23 @@ function ambilDataDariTabel() {
   const items = [];
 
   semuaBaris.forEach(baris => {
-    const selects = baris.querySelectorAll("select");
-    const inputs = baris.querySelectorAll("input");
-    const textarea = baris.querySelector("textarea");
-
     items.push({
-      kategori: selects[0].value,
-      item: inputs[0].value,
-      satuan: selects[1].value,
-      supplier: selects[2].value,
-      hppSatuan: Number(inputs[1].value) || 0,
-      supplierPembanding1: selects[3].value,
-      hargaPembanding1: Number(inputs[2].value) || 0,
-      supplierPembanding2: selects[4].value,
-      hargaPembanding2: Number(inputs[3].value) || 0,
-      qty: Number(inputs[4].value) || 0,
-      marginPersen: Number(inputs[5].value) || 0,
-      catatan: textarea.value
+      kategori: baris.dataset.kategori,
+      item: baris.dataset.item,
+      satuan: baris.dataset.satuan,
+
+      supplier: baris.dataset.supplier,
+      hppSatuan: Number(baris.dataset.hppSatuan) || 0,
+
+      supplierPembanding1: baris.dataset.supplierPembanding1,
+      hargaPembanding1: Number(baris.dataset.hargaPembanding1) || 0,
+
+      supplierPembanding2: baris.dataset.supplierPembanding2,
+      hargaPembanding2: Number(baris.dataset.hargaPembanding2) || 0,
+
+      qty: Number(baris.dataset.qty) || 0,
+      marginPersen: Number(baris.dataset.marginPersen) || 0,
+      catatan: baris.dataset.catatan
     });
   });
 
@@ -272,33 +275,49 @@ function hitungEstimasi() {
   let kategoriSummary = {};
 
   semuaBaris.forEach(baris => {
-    const selects = baris.querySelectorAll("select");
-    const inputs = baris.querySelectorAll("input");
-
-    const kategori = selects[0].value;
+    const kategori = baris.dataset.kategori;
+    const item = baris.dataset.item;
+    const satuan = baris.dataset.satuan;
+    const qty = Number(baris.dataset.qty) || 0;
+    const marginPersen = Number(baris.dataset.marginPersen) || 0;
+    const catatan = baris.dataset.catatan || "";
 
     const rekomendasi = cariRekomendasiSupplier([
-      { supplier: selects[2].value, harga: Number(inputs[1].value) || 0 },
-      { supplier: selects[3].value, harga: Number(inputs[2].value) || 0 },
-      { supplier: selects[4].value, harga: Number(inputs[3].value) || 0 }
+      {
+        supplier: baris.dataset.supplier,
+        harga: Number(baris.dataset.hppSatuan) || 0
+      },
+      {
+        supplier: baris.dataset.supplierPembanding1,
+        harga: Number(baris.dataset.hargaPembanding1) || 0
+      },
+      {
+        supplier: baris.dataset.supplierPembanding2,
+        harga: Number(baris.dataset.hargaPembanding2) || 0
+      }
     ]);
 
     const hppSatuan = rekomendasi.harga;
-    const qty = Number(inputs[4].value) || 0;
-    const marginPersen = Number(inputs[5].value) || 0;
-
     const hargaJualSatuan = hppSatuan + (hppSatuan * marginPersen / 100);
     const totalHpp = qty * hppSatuan;
     const totalJual = qty * hargaJualSatuan;
     const profitItem = totalJual - totalHpp;
 
-    baris.querySelector(".rekomendasiSupplier").innerText =
-      rekomendasi.supplier === "-" ? "-" : `${rekomendasi.supplier} / ${formatRupiah(rekomendasi.harga)}`;
+    baris.querySelector(".viewKategori").innerText = kategori;
+    baris.querySelector(".viewItem").innerText = item;
+    baris.querySelector(".viewSatuan").innerText = satuan;
 
-    baris.querySelector(".hargaJualSatuan").innerText = formatRupiah(hargaJualSatuan);
+    baris.querySelector(".rekomendasiSupplier").innerText =
+      rekomendasi.supplier === "-"
+        ? "-"
+        : rekomendasi.supplier + " / " + formatRupiah(rekomendasi.harga);
+
+    baris.querySelector(".viewQty").innerText = qty;
+    baris.querySelector(".viewMargin").innerText = marginPersen + "%";
     baris.querySelector(".totalHpp").innerText = formatRupiah(totalHpp);
     baris.querySelector(".totalJual").innerText = formatRupiah(totalJual);
     baris.querySelector(".profitItem").innerText = formatRupiah(profitItem);
+    baris.querySelector(".viewCatatan").innerText = catatan;
 
     grandHpp += totalHpp;
     grandJual += totalJual;
@@ -316,7 +335,7 @@ function hitungEstimasi() {
   document.getElementById("grandHpp").innerText = formatRupiah(grandHpp);
   document.getElementById("grandProfit").innerText = formatRupiah(grandProfit);
   document.getElementById("grandJual").innerText = formatRupiah(grandJual);
-  
+
   const marginProject = grandJual > 0 ? (grandProfit / grandJual) * 100 : 0;
 
   document.getElementById("dashboardHpp").innerText = formatRupiah(grandHpp);
@@ -580,28 +599,24 @@ function editItem(tombol) {
   const semuaBaris = Array.from(document.querySelectorAll("#daftarItem tr"));
   const index = semuaBaris.indexOf(baris);
 
-  const selects = baris.querySelectorAll("select");
-  const inputs = baris.querySelectorAll("input");
-  const textarea = baris.querySelector("textarea");
-
   document.getElementById("editIndex").value = index;
 
-  document.getElementById("formKategori").value = selects[0].value;
-  document.getElementById("formItem").value = inputs[0].value;
-  document.getElementById("formSatuan").value = selects[1].value;
+  document.getElementById("formKategori").value = baris.dataset.kategori;
+  document.getElementById("formItem").value = baris.dataset.item;
+  document.getElementById("formSatuan").value = baris.dataset.satuan;
 
-  document.getElementById("formSupplierUtama").value = selects[2].value;
-  document.getElementById("formHargaUtama").value = inputs[1].value;
+  document.getElementById("formSupplierUtama").value = baris.dataset.supplier;
+  document.getElementById("formHargaUtama").value = baris.dataset.hppSatuan;
 
-  document.getElementById("formSupplier1").value = selects[3].value;
-  document.getElementById("formHarga1").value = inputs[2].value;
+  document.getElementById("formSupplier1").value = baris.dataset.supplierPembanding1;
+  document.getElementById("formHarga1").value = baris.dataset.hargaPembanding1;
 
-  document.getElementById("formSupplier2").value = selects[4].value;
-  document.getElementById("formHarga2").value = inputs[3].value;
+  document.getElementById("formSupplier2").value = baris.dataset.supplierPembanding2;
+  document.getElementById("formHarga2").value = baris.dataset.hargaPembanding2;
 
-  document.getElementById("formQty").value = inputs[4].value;
-  document.getElementById("formMargin").value = inputs[5].value;
-  document.getElementById("formCatatan").value = textarea.value;
+  document.getElementById("formQty").value = baris.dataset.qty;
+  document.getElementById("formMargin").value = baris.dataset.marginPersen;
+  document.getElementById("formCatatan").value = baris.dataset.catatan;
 
   document.getElementById("btnTambahItem").style.display = "none";
   document.getElementById("btnUpdateItem").style.display = "inline-block";
@@ -660,26 +675,29 @@ function updateItemDariForm() {
     return;
   }
 
-  const selects = baris.querySelectorAll("select");
-  const inputs = baris.querySelectorAll("input");
-  const textarea = baris.querySelector("textarea");
+  const namaItem = document.getElementById("formItem").value;
 
-  selects[0].value = document.getElementById("formKategori").value;
-  inputs[0].value = document.getElementById("formItem").value;
-  selects[1].value = document.getElementById("formSatuan").value;
+  if (!namaItem) {
+    alert("Nama item wajib diisi.");
+    return;
+  }
 
-  selects[2].value = document.getElementById("formSupplierUtama").value;
-  inputs[1].value = document.getElementById("formHargaUtama").value;
+  baris.dataset.kategori = document.getElementById("formKategori").value;
+  baris.dataset.item = namaItem;
+  baris.dataset.satuan = document.getElementById("formSatuan").value;
 
-  selects[3].value = document.getElementById("formSupplier1").value;
-  inputs[2].value = document.getElementById("formHarga1").value;
+  baris.dataset.supplier = document.getElementById("formSupplierUtama").value;
+  baris.dataset.hppSatuan = Number(document.getElementById("formHargaUtama").value) || 0;
 
-  selects[4].value = document.getElementById("formSupplier2").value;
-  inputs[3].value = document.getElementById("formHarga2").value;
+  baris.dataset.supplierPembanding1 = document.getElementById("formSupplier1").value;
+  baris.dataset.hargaPembanding1 = Number(document.getElementById("formHarga1").value) || 0;
 
-  inputs[4].value = document.getElementById("formQty").value;
-  inputs[5].value = document.getElementById("formMargin").value;
-  textarea.value = document.getElementById("formCatatan").value;
+  baris.dataset.supplierPembanding2 = document.getElementById("formSupplier2").value;
+  baris.dataset.hargaPembanding2 = Number(document.getElementById("formHarga2").value) || 0;
+
+  baris.dataset.qty = Number(document.getElementById("formQty").value) || 1;
+  baris.dataset.marginPersen = Number(document.getElementById("formMargin").value) || 20;
+  baris.dataset.catatan = document.getElementById("formCatatan").value;
 
   hitungEstimasi();
   simpanData();
