@@ -233,3 +233,10 @@ td:nth-child(17) textarea {
     grid-template-columns: 1fr 1fr;
   }
 }
+
+td .print.kecil,
+td .hapus.kecil {
+  display: block;
+  width: 100%;
+  margin-bottom: 5px;
+}
