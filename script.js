@@ -158,7 +158,10 @@ function buatBaris(data = {}) {
     <td class="profitItem">Rp 0</td>
 
     <td><textarea oninput="simpanData()">${data.catatan || ""}</textarea></td>
-    <td><button class="hapus kecil" onclick="hapusItem(this)">Hapus</button></td>
+    <td>
+  <button class="print kecil" onclick="editItem(this)">Edit</button>
+  <button class="hapus kecil" onclick="hapusItem(this)">Hapus</button>
+</td>
   `;
 
   document.getElementById("daftarItem").appendChild(baris);
@@ -572,6 +575,43 @@ function refreshFormSupplierOptions() {
   });
 }
 
+function editItem(tombol) {
+  const baris = tombol.closest("tr");
+  const semuaBaris = Array.from(document.querySelectorAll("#daftarItem tr"));
+  const index = semuaBaris.indexOf(baris);
+
+  const selects = baris.querySelectorAll("select");
+  const inputs = baris.querySelectorAll("input");
+  const textarea = baris.querySelector("textarea");
+
+  document.getElementById("editIndex").value = index;
+
+  document.getElementById("formKategori").value = selects[0].value;
+  document.getElementById("formItem").value = inputs[0].value;
+  document.getElementById("formSatuan").value = selects[1].value;
+
+  document.getElementById("formSupplierUtama").value = selects[2].value;
+  document.getElementById("formHargaUtama").value = inputs[1].value;
+
+  document.getElementById("formSupplier1").value = selects[3].value;
+  document.getElementById("formHarga1").value = inputs[2].value;
+
+  document.getElementById("formSupplier2").value = selects[4].value;
+  document.getElementById("formHarga2").value = inputs[3].value;
+
+  document.getElementById("formQty").value = inputs[4].value;
+  document.getElementById("formMargin").value = inputs[5].value;
+  document.getElementById("formCatatan").value = textarea.value;
+
+  document.getElementById("btnTambahItem").style.display = "none";
+  document.getElementById("btnUpdateItem").style.display = "inline-block";
+
+  window.scrollTo({
+    top: document.getElementById("formItem").offsetTop - 120,
+    behavior: "smooth"
+  });
+}
+
 function tambahItemDariForm() {
   const data = {
     kategori: document.getElementById("formKategori").value,
@@ -603,6 +643,49 @@ function tambahItemDariForm() {
   resetFormItem();
 }
 
+function updateItemDariForm() {
+  const index = Number(document.getElementById("editIndex").value);
+
+  if (isNaN(index)) {
+    alert("Tidak ada item yang sedang diedit.");
+    return;
+  }
+
+  const semuaBaris = document.querySelectorAll("#daftarItem tr");
+  const baris = semuaBaris[index];
+
+  if (!baris) {
+    alert("Item tidak ditemukan.");
+    resetFormItem();
+    return;
+  }
+
+  const selects = baris.querySelectorAll("select");
+  const inputs = baris.querySelectorAll("input");
+  const textarea = baris.querySelector("textarea");
+
+  selects[0].value = document.getElementById("formKategori").value;
+  inputs[0].value = document.getElementById("formItem").value;
+  selects[1].value = document.getElementById("formSatuan").value;
+
+  selects[2].value = document.getElementById("formSupplierUtama").value;
+  inputs[1].value = document.getElementById("formHargaUtama").value;
+
+  selects[3].value = document.getElementById("formSupplier1").value;
+  inputs[2].value = document.getElementById("formHarga1").value;
+
+  selects[4].value = document.getElementById("formSupplier2").value;
+  inputs[3].value = document.getElementById("formHarga2").value;
+
+  inputs[4].value = document.getElementById("formQty").value;
+  inputs[5].value = document.getElementById("formMargin").value;
+  textarea.value = document.getElementById("formCatatan").value;
+
+  hitungEstimasi();
+  simpanData();
+  resetFormItem();
+}
+
 function resetFormItem() {
   document.getElementById("formKategori").value = "Konstruksi";
   document.getElementById("formItem").value = "";
@@ -620,6 +703,10 @@ function resetFormItem() {
   document.getElementById("formQty").value = 1;
   document.getElementById("formMargin").value = 20;
   document.getElementById("formCatatan").value = "";
+
+  document.getElementById("editIndex").value = "";
+  document.getElementById("btnTambahItem").style.display = "inline-block";
+  document.getElementById("btnUpdateItem").style.display = "none";
 }
 
 /* START APP */
