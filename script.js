@@ -414,6 +414,7 @@ function refreshSupplierDropdown() {
     select.innerHTML = supplierOptions(selected);
   });
 
+  refreshFormSupplierOptions();
   simpanData();
 }
 
@@ -559,8 +560,71 @@ function resetInventory() {
   tampilkanInventory();
 }
 
+function refreshFormSupplierOptions() {
+  const ids = ["formSupplierUtama", "formSupplier1", "formSupplier2"];
+
+  ids.forEach(id => {
+    const select = document.getElementById(id);
+    if (!select) return;
+
+    const selected = select.value;
+    select.innerHTML = supplierOptions(selected);
+  });
+}
+
+function tambahItemDariForm() {
+  const data = {
+    kategori: document.getElementById("formKategori").value,
+    item: document.getElementById("formItem").value,
+    satuan: document.getElementById("formSatuan").value,
+
+    supplier: document.getElementById("formSupplierUtama").value,
+    hppSatuan: Number(document.getElementById("formHargaUtama").value) || 0,
+
+    supplierPembanding1: document.getElementById("formSupplier1").value,
+    hargaPembanding1: Number(document.getElementById("formHarga1").value) || 0,
+
+    supplierPembanding2: document.getElementById("formSupplier2").value,
+    hargaPembanding2: Number(document.getElementById("formHarga2").value) || 0,
+
+    qty: Number(document.getElementById("formQty").value) || 1,
+    marginPersen: Number(document.getElementById("formMargin").value) || 20,
+    catatan: document.getElementById("formCatatan").value
+  };
+
+  if (!data.item) {
+    alert("Nama item wajib diisi.");
+    return;
+  }
+
+  buatBaris(data);
+  hitungEstimasi();
+  simpanData();
+  resetFormItem();
+}
+
+function resetFormItem() {
+  document.getElementById("formKategori").value = "Konstruksi";
+  document.getElementById("formItem").value = "";
+  document.getElementById("formSatuan").value = "paket";
+
+  document.getElementById("formSupplierUtama").value = "";
+  document.getElementById("formHargaUtama").value = "";
+
+  document.getElementById("formSupplier1").value = "";
+  document.getElementById("formHarga1").value = "";
+
+  document.getElementById("formSupplier2").value = "";
+  document.getElementById("formHarga2").value = "";
+
+  document.getElementById("formQty").value = 1;
+  document.getElementById("formMargin").value = 20;
+  document.getElementById("formCatatan").value = "";
+}
+
 /* START APP */
 muatSupplier();
 muatHistoriHarga();
 muatInventory();
+refreshFormSupplierOptions();
 muatData();
