@@ -131,8 +131,11 @@
 
   <textarea id="formCatatan" placeholder="Catatan teknis"></textarea>
 
-  <button onclick="tambahItemDariForm()">+ Tambah ke Estimasi</button>
-  <button class="reset" onclick="resetFormItem()">Reset Form</button>
+<input id="editIndex" type="hidden" value="">
+
+<button id="btnTambahItem" onclick="tambahItemDariForm()">+ Tambah ke Estimasi</button>
+<button id="btnUpdateItem" class="print" onclick="updateItemDariForm()" style="display:none;">Update Item</button>
+<button class="reset" onclick="resetFormItem()">Reset Form</button>
 </div>
   
     <table>
