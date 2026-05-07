@@ -176,7 +176,7 @@ button:hover {
 }
 
 .table-wrapper table {
-  min-width: 1900px;
+  min-width: 1100px;
   margin-top: 0;
 }
 
@@ -238,5 +238,31 @@ td .print.kecil,
 td .hapus.kecil {
   display: block;
   width: 100%;
+  margin-bottom: 5px;
+}
+
+.table-wrapper table {
+  min-width: 1100px;
+}
+
+.viewItem {
+  font-weight: bold;
+}
+
+.viewCatatan {
+  max-width: 220px;
+  white-space: normal;
+  font-size: 12px;
+  color: #555;
+}
+
+td {
+  vertical-align: middle;
+}
+
+td .print.kecil,
+td .hapus.kecil {
+  display: inline-block;
+  width: auto;
   margin-bottom: 5px;
 }
